@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GeoTrails</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="Cancel">dismiss</string>
+    <string name="open_location_settings">Settings</string>
+    <string name="gps_network_not_enabled">Seems your gps locations service is off !</string>
+</resources>

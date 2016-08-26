@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.theleafapps.pro.geotrails.ui.AddDataActivity">
+    <ScrollView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/innerRelativeLayout"
+            android:padding="10dp"
+            android:focusableInTouchMode="true"
+            android:focusable="true">
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/addDataSmallMap"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="280dp"
+                android:layout_height="100dp"
+                tools:context=".ui.AddDataActivity"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="&lt;Reverse GC>"
+                android:id="@+id/reverse_geo_add_tv"
+                android:layout_below="@+id/addDataSmallMap"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:gravity="center_horizontal" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/location_title_et"
+                android:layout_below="@+id/reverse_geo_add_tv"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:minWidth="150dp"
+                android:maxLines="1"
+                android:hint="Title "
+                android:textAlignment="center"
+                android:gravity="center_horizontal"
+                android:focusable="false"
+                android:focusableInTouchMode="false" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/location_user_address_et"
+                android:hint="Put Address Here"
+                android:textAlignment="center"
+                android:layout_alignParentTop="false"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:layout_below="@+id/location_title_et"
+                android:gravity="center_horizontal"
+                android:maxLines="2"
+                android:focusable="false"
+                android:focusableInTouchMode="false" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/location_desc_et"
+                android:layout_below="@+id/location_user_address_et"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:hint="Write something about this place"
+                android:gravity="center_horizontal"
+                android:maxLines="3"
+                android:focusable="false"
+                android:focusableInTouchMode="false" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="  Save &amp; Continue   >"
+                android:id="@+id/mark_button"
+                android:layout_alignParentBottom="false"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/location_desc_et"
+                android:layout_marginTop="25dp" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+
+
+</RelativeLayout>
