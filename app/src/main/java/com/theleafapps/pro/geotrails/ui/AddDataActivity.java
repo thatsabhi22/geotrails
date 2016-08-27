@@ -5,8 +5,11 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +32,8 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     GoogleMap mMap;
     double userLat,userLong;
     TextView reverse_geo_add_tv;
+    EditText location_title_et,location_user_address_et,location_desc_et;
+    Button mark_button;
     String TAG = "Tangho";
     Address geoAddress;
 
@@ -37,11 +42,15 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_data);
 
-        Intent recIntent    = getIntent();
-        userLat             = recIntent.getDoubleExtra("userLat",0);
-        userLong            = recIntent.getDoubleExtra("userLong",0);
+        Intent recIntent            =   getIntent();
+        userLat                     =   recIntent.getDoubleExtra("userLat",0);
+        userLong                    =   recIntent.getDoubleExtra("userLong",0);
 
-        reverse_geo_add_tv  = (TextView) findViewById(R.id.reverse_geo_add_tv);
+        reverse_geo_add_tv          =   (TextView) findViewById(R.id.reverse_geo_add_tv);
+        location_title_et           =   (EditText) findViewById(R.id.location_title_et);
+        location_user_address_et    =   (EditText) findViewById(R.id.location_user_address_et);
+        location_desc_et            =   (EditText) findViewById(R.id.location_desc_et);
+        mark_button                 =   (Button) findViewById(R.id.mark_button);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.addDataSmallMap);
@@ -73,6 +82,18 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
             Toast.makeText(this,"You're Offline!! , Address could not be determined.",Toast.LENGTH_SHORT).show();
             //e.printStackTrace();
         }
+
+        mark_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(TextUtils.isEmpty(location_title_et.getText())){
+                    location_title_et.setError("Atleast Put a title to this location");
+                }else{
+
+
+                }
+            }
+        });
 
     }
 

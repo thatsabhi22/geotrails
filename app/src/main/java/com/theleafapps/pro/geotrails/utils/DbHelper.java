@@ -14,6 +14,8 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "geoTrailsDB";
     private Context context;
+    public static SQLiteDatabase GtrailsDB;
+
 
     public DbHelper(Context context){
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -43,5 +45,23 @@ public class DbHelper extends SQLiteOpenHelper {
         //MainActivity.arrayAdapter.notifyDataSetChanged();
 
         Log.i("Life","Note Deleted ..");
+    }
+
+    public static void createDB(Context context) {
+        GtrailsDB     = context.openOrCreateDatabase("featherNotesDB", Context.MODE_PRIVATE, null);
+        GtrailsDB.execSQL(
+        "CREATE TABLE IF NOT EXISTS user (user_id INTEGER PRIMARY KEY AUTOINCREMENT, user_dev_id INTEGER, " +
+                "first_name VARCHAR, last_name VARCHAR, gender VARCHAR, email VARCHAR, city VARCHAR, country VARCHAR, " +
+                "created_on DATETIME DEFAULT CURRENT_TIMESTAMP, modified_on DATETIME DEFAULT CURRENT_TIMESTAMP);");
+
+        GtrailsDB.execSQL(
+        "CREATE TABLE IF NOT EXISTS marker (loca_id INTEGER PRIMARY KEY AUTOINCREMENT, user_lat DOUBLE, " +
+                "user_long DOUBLE, user_id INTEGER, user_add VARCHAR, loca_title VARCHAR, loca_desc VARCHAR, geocode_add VARCHAR, " +
+                "created_on DATETIME DEFAULT CURRENT_TIMESTAMP, modified_on DATETIME DEFAULT CURRENT_TIMESTAMP);");
+
+        GtrailsDB.execSQL(
+        "CREATE TABLE IF NOT EXISTS image (image_id INTEGER PRIMARY KEY AUTOINCREMENT, loca_id INTEGER, " +
+                "user_id INTEGER, image_name VARCHAR, image_desc VARCHAR,"+
+                "created_on DATETIME DEFAULT CURRENT_TIMESTAMP, modified_on DATETIME DEFAULT CURRENT_TIMESTAMP);");
     }
 }

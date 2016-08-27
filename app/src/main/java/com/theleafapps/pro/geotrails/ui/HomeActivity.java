@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.theleafapps.pro.geotrails.R;
+import com.theleafapps.pro.geotrails.utils.DbHelper;
 
 public class HomeActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
@@ -43,6 +44,8 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        DbHelper.createDB(getApplicationContext());
 
         mark_location_button  = (Button) findViewById(R.id.mark_location_button);
 
@@ -78,6 +81,9 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
+
+
+
     }
 
     @Override
