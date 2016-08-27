@@ -50,9 +50,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 
         try{
-
             List<Address> listAddress = geocoder.getFromLocation(userLat,userLong,1);
-
             if(listAddress!=null && listAddress.size()>0){
                 Log.d(TAG, "Address Geocode : " + listAddress.get(0).toString());
                 geoAddress = listAddress.get(0);

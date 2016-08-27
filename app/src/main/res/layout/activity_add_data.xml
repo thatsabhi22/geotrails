@@ -12,9 +12,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/innerRelativeLayout"
-            android:padding="10dp"
+            android:descendantFocusability="beforeDescendants"
             android:focusableInTouchMode="true"
-            android:focusable="true">
+            android:padding="10dp">
 
             <fragment xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
@@ -50,27 +50,25 @@
                 android:minWidth="150dp"
                 android:maxLines="1"
                 android:hint="Title "
-                android:textAlignment="center"
+                android:nextFocusDown="@+id/location_user_address_et"
                 android:gravity="center_horizontal"
-                android:focusable="false"
-                android:focusableInTouchMode="false" />
-
+                android:singleLine="true"
+                android:maxLength="60" />
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
+                android:nextFocusDown="@+id/location_desc_et"
                 android:ems="10"
                 android:id="@+id/location_user_address_et"
                 android:hint="Put Address Here"
-                android:textAlignment="center"
                 android:layout_alignParentTop="false"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="15dp"
                 android:layout_below="@+id/location_title_et"
                 android:gravity="center_horizontal"
                 android:maxLines="2"
-                android:focusable="false"
-                android:focusableInTouchMode="false" />
+                android:maxLength="250" />
 
             <EditText
                 android:layout_width="wrap_content"
@@ -81,11 +79,11 @@
                 android:layout_below="@+id/location_user_address_et"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="15dp"
+                android:nextFocusDown="@+id/mark_button"
                 android:hint="Write something about this place"
                 android:gravity="center_horizontal"
                 android:maxLines="3"
-                android:focusable="false"
-                android:focusableInTouchMode="false" />
+                android:maxLength="300" />
 
             <Button
                 android:layout_width="wrap_content"
