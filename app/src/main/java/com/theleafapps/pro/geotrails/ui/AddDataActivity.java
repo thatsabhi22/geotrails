@@ -1,6 +1,8 @@
 package com.theleafapps.pro.geotrails.ui;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.theleafapps.pro.geotrails.R;
+import com.theleafapps.pro.geotrails.utils.DbHelper;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,11 +32,12 @@ import java.util.Locale;
 
 public class AddDataActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    DbHelper dbHelper;
     GoogleMap mMap;
     double userLat,userLong;
-    TextView reverse_geo_add_tv;
+    TextView geo_code_add_tv;
     EditText location_title_et,location_user_address_et,location_desc_et;
-    Button mark_button;
+    Button mark_button,go_to_list_button;
     String TAG = "Tangho";
     Address geoAddress;
 
@@ -46,11 +50,12 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         userLat                     =   recIntent.getDoubleExtra("userLat",0);
         userLong                    =   recIntent.getDoubleExtra("userLong",0);
 
-        reverse_geo_add_tv          =   (TextView) findViewById(R.id.reverse_geo_add_tv);
+        geo_code_add_tv             =   (TextView) findViewById(R.id.reverse_geo_add_tv);
         location_title_et           =   (EditText) findViewById(R.id.location_title_et);
         location_user_address_et    =   (EditText) findViewById(R.id.location_user_address_et);
         location_desc_et            =   (EditText) findViewById(R.id.location_desc_et);
         mark_button                 =   (Button) findViewById(R.id.mark_button);
+        go_to_list_button           =   (Button) findViewById(R.id.go_to_list_button);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.addDataSmallMap);
@@ -73,15 +78,23 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                             sb.append(", ");
                         }
                     }
-                    reverse_geo_add_tv.setText(sb.toString());
+                    geo_code_add_tv.setText(sb.toString());
                 }
             }
 
         } catch (IOException e) {
-            reverse_geo_add_tv.setVisibility(View.GONE);
+            geo_code_add_tv.setVisibility(View.GONE);
             Toast.makeText(this,"You're Offline!! , Address could not be determined.",Toast.LENGTH_SHORT).show();
             //e.printStackTrace();
         }
+
+        go_to_list_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AddDataActivity.this,LocationListActivity.class);
+                startActivity(intent);
+            }
+        });
 
         mark_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,8 +102,22 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                 if(TextUtils.isEmpty(location_title_et.getText())){
                     location_title_et.setError("Atleast Put a title to this location");
                 }else{
+                    dbHelper = new DbHelper(AddDataActivity.this);
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    SQLiteStatement stmt = db.compileStatement(
+                            "INSERT INTO marker (user_lat,user_long,user_id,user_add,loca_title," +
+                                    "loca_desc,geocode_add,is_star) values (?,?,?,?,?,?,?,?);");
+                    stmt.bindDouble(1, userLat);
+                    stmt.bindDouble(2, userLong);
+                    stmt.bindLong(3, 1);
+                    stmt.bindString(4, location_user_address_et.getText().toString());
+                    stmt.bindString(5, location_title_et.getText().toString());
+                    stmt.bindString(6, location_desc_et.getText().toString());
+                    stmt.bindString(7, geo_code_add_tv.getText().toString());
+                    stmt.bindLong(8, 0);
+                    stmt.execute();
 
-
+                    Log.d(TAG, "Records added");
                 }
             }
         });
@@ -110,5 +137,6 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_mini)));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15f));
+        mMap.getUiSettings().setZoomGesturesEnabled(true);
     }
 }

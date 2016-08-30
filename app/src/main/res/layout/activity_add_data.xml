@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.theleafapps.pro.geotrails.ui.AddDataActivity">
+    tools:context=".ui.AddDataActivity">
     <ScrollView
         android:layout_height="match_parent"
         android:layout_width="match_parent">
@@ -93,12 +93,16 @@
                 android:layout_alignParentBottom="false"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/location_desc_et"
-                android:layout_marginTop="25dp" />
+                android:layout_marginTop="45dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="List Activity"
+                android:id="@+id/go_to_list_button"
+                android:layout_below="@+id/location_desc_et"
+                android:layout_centerHorizontal="true" />
 
         </RelativeLayout>
     </ScrollView>
-
-
-
-
 </RelativeLayout>

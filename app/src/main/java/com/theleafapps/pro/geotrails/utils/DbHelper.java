@@ -4,7 +4,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
+import android.os.Environment;
 import android.util.Log;
+
+import java.io.File;
 
 /**
  * Created by aviator on 07/01/16.
@@ -18,7 +21,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
     public DbHelper(Context context){
-        super(context,DATABASE_NAME,null,DATABASE_VERSION);
+        super(context, DATABASE_NAME,null,DATABASE_VERSION);
         this.context = context;
     }
 
@@ -48,7 +51,7 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public static void createDB(Context context) {
-        GtrailsDB     = context.openOrCreateDatabase("featherNotesDB", Context.MODE_PRIVATE, null);
+        GtrailsDB     = context.openOrCreateDatabase("geoTrailsDB", Context.MODE_PRIVATE, null);
         GtrailsDB.execSQL(
         "CREATE TABLE IF NOT EXISTS user (user_id INTEGER PRIMARY KEY AUTOINCREMENT, user_dev_id INTEGER, " +
                 "first_name VARCHAR, last_name VARCHAR, gender VARCHAR, email VARCHAR, city VARCHAR, country VARCHAR, " +
@@ -57,7 +60,7 @@ public class DbHelper extends SQLiteOpenHelper {
         GtrailsDB.execSQL(
         "CREATE TABLE IF NOT EXISTS marker (loca_id INTEGER PRIMARY KEY AUTOINCREMENT, user_lat DOUBLE, " +
                 "user_long DOUBLE, user_id INTEGER, user_add VARCHAR, loca_title VARCHAR, loca_desc VARCHAR, geocode_add VARCHAR, " +
-                "created_on DATETIME DEFAULT CURRENT_TIMESTAMP, modified_on DATETIME DEFAULT CURRENT_TIMESTAMP);");
+                "is_star INTEGER, created_on DATETIME DEFAULT CURRENT_TIMESTAMP, modified_on DATETIME DEFAULT CURRENT_TIMESTAMP);");
 
         GtrailsDB.execSQL(
         "CREATE TABLE IF NOT EXISTS image (image_id INTEGER PRIMARY KEY AUTOINCREMENT, loca_id INTEGER, " +

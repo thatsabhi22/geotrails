@@ -32,7 +32,6 @@ import com.theleafapps.pro.geotrails.utils.DbHelper;
 public class HomeActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
     private GoogleMap mMap;
-
     private String TAG = "Tangho";
 
     Location location;
@@ -75,24 +74,25 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         mark_location_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                checkIfLocationEnabled(HomeActivity.this);
                 Intent intent = new Intent(HomeActivity.this,AddDataActivity.class);
                 intent.putExtra("userLat",location.getLatitude());
                 intent.putExtra("userLong",location.getLongitude());
                 startActivity(intent);
             }
         });
-
-
-
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        LatLng sydney;
         // Add a marker in Sydney and move the camera
-        //LatLng sydney = new LatLng(-34, 151);
-        LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
+        if(location == null) {
+            sydney = new LatLng(-34, 151);
+        }else{
+            sydney = new LatLng(location.getLatitude(), location.getLongitude());
+        }
         Marker mkr = mMap.addMarker(
                         new MarkerOptions()
                                 .position(sydney)
@@ -101,11 +101,14 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_used)));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13f));
+        mMap.getUiSettings().setZoomGesturesEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-        LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
+    public void onLocationChanged(Location locationUpdate) {
+        LatLng sydney = new LatLng(locationUpdate.getLatitude(), location.getLongitude());
+        location = locationUpdate;
         mMap.clear();
         mMap.addMarker(
                 new MarkerOptions()
@@ -114,7 +117,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
                         .snippet("Mark Your Location")
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_used)));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,13f));
-        Log.d(TAG, "onLocationChanged: lat : "+ location.getLatitude()+" long : " + location.getLongitude());
+        Log.d(TAG, "onLocationChanged: lat : "+ locationUpdate.getLatitude()+" long : " + locationUpdate.getLongitude());
     }
 
     @Override
