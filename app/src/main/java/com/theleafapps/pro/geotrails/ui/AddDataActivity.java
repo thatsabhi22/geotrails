@@ -6,7 +6,9 @@ import android.database.sqlite.SQLiteStatement;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -34,17 +36,27 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
 
     DbHelper dbHelper;
     GoogleMap mMap;
+    Toolbar toolbar;
     double userLat,userLong;
     TextView geo_code_add_tv;
     EditText location_title_et,location_user_address_et,location_desc_et;
     Button mark_button,go_to_list_button;
     String TAG = "Tangho";
     Address geoAddress;
+    ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_data);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar_add_data);
+        setSupportActionBar(toolbar);
+
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setIcon(R.drawable.logo_small);
+        actionBar.setTitle("GeoTrails - Add Data");
 
         Intent recIntent            =   getIntent();
         userLat                     =   recIntent.getDoubleExtra("userLat",0);

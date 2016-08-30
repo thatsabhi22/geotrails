@@ -120,7 +120,6 @@ public class LocationListAdapter extends
                     View parentRow      =   (View) view.getParent();
                     CardView cardView   =   (CardView) parentRow.getParent();
                     RecyclerView rv     =   (RecyclerView) cardView.getParent();
-
                     int position        =   rv.getChildLayoutPosition(cardView);
 
                     if(markers.markerList.get(position).is_star == 0){
