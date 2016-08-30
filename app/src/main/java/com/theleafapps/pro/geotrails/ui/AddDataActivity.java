@@ -11,6 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,7 +59,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setIcon(R.drawable.logo_small);
-        actionBar.setTitle("GeoTrails - Add Data");
+        actionBar.setTitle("  Add Info");
 
         Intent recIntent            =   getIntent();
         userLat                     =   recIntent.getDoubleExtra("userLat",0);
@@ -150,5 +153,31 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15f));
         mMap.getUiSettings().setZoomGesturesEnabled(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_add_data, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_location_list:
+                Intent intent;
+                intent = new Intent(this,LocationListActivity.class);
+                intent.putExtra("caller","AddDataActivity");
+                startActivity(intent);
+                return true;
+            case R.id.menu_map:
+                intent = new Intent(this,HomeActivity.class);
+                intent.putExtra("caller","AddDataActivity");
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.theleafapps.pro.shopnick">
+    <item
+        android:id="@+id/menu_map"
+        android:icon="@drawable/map_menu_icon"
+        android:title="Map"
+        app:showAsAction="always"
+        />
+</menu>

@@ -1,10 +1,16 @@
 package com.theleafapps.pro.geotrails.ui;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.adapters.LocationListAdapter;
@@ -17,11 +23,21 @@ public class LocationListActivity extends AppCompatActivity {
     LocationListAdapter locationListAdapter;
     RecyclerView locationListRecyclerView;
     Markers markers;
+    Toolbar toolbar;
+    ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_list);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar_location_list);
+        setSupportActionBar(toolbar);
+
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setIcon(R.drawable.logo_small);
+        actionBar.setTitle("  GeoTrails");
 
         markers     =   getAllMarkers();
         locationListRecyclerView
@@ -79,5 +95,26 @@ public class LocationListActivity extends AppCompatActivity {
             }while(c.moveToNext());
         }
         return markers;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_location_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.menu_location_list:
+                intent = new Intent(this,LocationListActivity.class);
+                intent.putExtra("caller","LocationListActivity");
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
