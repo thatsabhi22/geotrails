@@ -16,7 +16,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.theleafapps.pro.geotrails.R;
+import com.theleafapps.pro.geotrails.utils.Commons;
 import com.theleafapps.pro.geotrails.utils.DbHelper;
 
 public class HomeActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
@@ -37,7 +39,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
     Location location;
     LocationManager locationManager;
     String provider;
-    Button mark_location_button;
+    ImageView mark_location_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +48,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
 
         DbHelper.createDB(getApplicationContext());
 
-        mark_location_button  = (Button) findViewById(R.id.mark_location_button);
+        mark_location_button  = (ImageView) findViewById(R.id.mark_location_button);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -59,6 +61,13 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
+        }
+
+        if(Commons.accessT != null){
+
+            Toast.makeText(this,"Home Activity >>" +Commons.accessT.getApplicationId(),Toast.LENGTH_LONG).show();
+
+
         }
 
         checkIfLocationEnabled(this);

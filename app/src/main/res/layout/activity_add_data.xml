@@ -71,6 +71,7 @@
                 android:gravity="center_horizontal"
                 android:singleLine="true"
                 android:maxLength="60" />
+
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -110,15 +111,7 @@
                 android:layout_alignParentBottom="false"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/location_desc_et"
-                android:layout_marginTop="45dp" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="List Activity"
-                android:id="@+id/go_to_list_button"
-                android:layout_below="@+id/location_desc_et"
-                android:layout_centerHorizontal="true" />
+                android:layout_marginTop="40dp" />
 
         </RelativeLayout>
     </ScrollView>

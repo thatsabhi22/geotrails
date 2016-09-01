@@ -43,7 +43,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     double userLat,userLong;
     TextView geo_code_add_tv;
     EditText location_title_et,location_user_address_et,location_desc_et;
-    Button mark_button,go_to_list_button;
+    Button mark_button;
     String TAG = "Tangho";
     Address geoAddress;
     ActionBar actionBar;
@@ -70,7 +70,6 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         location_user_address_et    =   (EditText) findViewById(R.id.location_user_address_et);
         location_desc_et            =   (EditText) findViewById(R.id.location_desc_et);
         mark_button                 =   (Button) findViewById(R.id.mark_button);
-        go_to_list_button           =   (Button) findViewById(R.id.go_to_list_button);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.addDataSmallMap);
@@ -102,14 +101,6 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
             Toast.makeText(this,"You're Offline!! , Address could not be determined.",Toast.LENGTH_SHORT).show();
             //e.printStackTrace();
         }
-
-        go_to_list_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(AddDataActivity.this,LocationListActivity.class);
-                startActivity(intent);
-            }
-        });
 
         mark_button.setOnClickListener(new View.OnClickListener() {
             @Override
