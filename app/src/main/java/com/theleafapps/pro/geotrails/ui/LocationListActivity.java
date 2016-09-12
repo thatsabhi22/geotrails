@@ -11,6 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.adapters.LocationListAdapter;
@@ -22,6 +25,8 @@ public class LocationListActivity extends AppCompatActivity {
 
     LocationListAdapter locationListAdapter;
     RecyclerView locationListRecyclerView;
+    TextView no_location_tv;
+    ImageView mark_now_button;
     Markers markers;
     Toolbar toolbar;
     ActionBar actionBar;
@@ -31,7 +36,9 @@ public class LocationListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_list);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar_location_list);
+        toolbar         =   (Toolbar) findViewById(R.id.toolbar_location_list);
+        no_location_tv  =   (TextView) findViewById(R.id.no_location_tv);
+        mark_now_button =   (ImageView) findViewById(R.id.mark_now_button);
         setSupportActionBar(toolbar);
 
         actionBar = getSupportActionBar();
@@ -51,9 +58,24 @@ public class LocationListActivity extends AppCompatActivity {
     }
 
     private void setEmptyLocationList() {
+        locationListRecyclerView.setVisibility(View.GONE);
+        no_location_tv.setVisibility(View.VISIBLE);
+        mark_now_button.setVisibility(View.VISIBLE);
+
+        mark_now_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LocationListActivity.this,HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
     }
 
     private void reloadLocationList() {
+        locationListRecyclerView.setVisibility(View.VISIBLE);
+        no_location_tv.setVisibility(View.GONE);
+        mark_now_button.setVisibility(View.GONE);
         locationListAdapter  =  new LocationListAdapter(this,markers);
         locationListRecyclerView.setAdapter(locationListAdapter);
 

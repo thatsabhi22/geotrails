@@ -29,4 +29,22 @@
         android:scrollbars="vertical"
         android:layout_alignParentBottom="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="No Locations Marked Yet !!"
+        android:id="@+id/no_location_tv"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/mark_now_button"
+        android:src="@drawable/mark_now"
+        android:layout_below="@+id/no_location_tv"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp" />
+
 </RelativeLayout>

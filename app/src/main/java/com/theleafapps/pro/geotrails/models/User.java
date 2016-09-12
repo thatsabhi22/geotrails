@@ -13,13 +13,13 @@ public class User extends BaseRecord {
     public int user_id;
 
     @JsonProperty("user_dev_id")
-    public int user_dev_id;
+    public String user_dev_id;
 
-    @JsonProperty("city")
-    public String city;
+    @JsonProperty("fb_id")
+    public String fb_id;
 
-    @JsonProperty("country")
-    public String country;
+    @JsonProperty("current_location")
+    public String current_location;
 
     @JsonProperty("created_on")
     public String created_on;

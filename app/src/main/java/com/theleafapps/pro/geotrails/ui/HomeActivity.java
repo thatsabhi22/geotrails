@@ -29,7 +29,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.utils.Commons;
-import com.theleafapps.pro.geotrails.utils.DbHelper;
 
 public class HomeActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
@@ -39,16 +38,15 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
     Location location;
     LocationManager locationManager;
     String provider;
-    ImageView mark_location_button;
+    ImageView mark_location_button,list_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        DbHelper.createDB(getApplicationContext());
-
-        mark_location_button  = (ImageView) findViewById(R.id.mark_location_button);
+        mark_location_button    =   (ImageView) findViewById(R.id.mark_location_button);
+        list_button             =   (ImageView) findViewById(R.id.list_button);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -56,7 +54,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        provider = locationManager.getBestProvider(new Criteria(), false);
+        provider        = locationManager.getBestProvider(new Criteria(), false);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -66,7 +64,6 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         if(Commons.accessT != null){
 
             Toast.makeText(this,"Home Activity >>" +Commons.accessT.getApplicationId(),Toast.LENGTH_LONG).show();
-
 
         }
 
@@ -83,10 +80,24 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         mark_location_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkIfLocationEnabled(HomeActivity.this);
-                Intent intent = new Intent(HomeActivity.this,AddDataActivity.class);
-                intent.putExtra("userLat",location.getLatitude());
-                intent.putExtra("userLong",location.getLongitude());
+                if(Commons.accessT != null) {
+                    checkIfLocationEnabled(HomeActivity.this);
+                    Intent intent = new Intent(HomeActivity.this, AddDataActivity.class);
+                    intent.putExtra("userLat", location.getLatitude());
+                    intent.putExtra("userLong", location.getLongitude());
+                    startActivity(intent);
+                }else{
+                    Intent intent = new Intent(HomeActivity.this, AuthActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        list_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this,LocationListActivity.class);
                 startActivity(intent);
             }
         });

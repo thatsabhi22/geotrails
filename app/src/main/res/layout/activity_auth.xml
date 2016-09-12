@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/back"
     tools:context="com.theleafapps.pro.geotrails.ui.AuthActivity">
 
     <com.facebook.login.widget.LoginButton
@@ -10,28 +11,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="49dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="times"
-        android:id="@+id/fbInfo"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="133dp" />
+        android:layout_marginTop="80dp" />
 
     <ImageView
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:src="@drawable/logotext_dark"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="101dp" />
+
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/skipToMap"
-        android:src="@drawable/skip"
-        android:layout_below="@+id/fbInfo"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="54dp" />
-
+        android:id="@+id/skip_button"
+        android:background="@drawable/skip_button"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/login_button"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

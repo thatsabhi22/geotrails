@@ -53,8 +53,8 @@ public class DbHelper extends SQLiteOpenHelper {
     public static void createDB(Context context) {
         GtrailsDB     = context.openOrCreateDatabase("geoTrailsDB", Context.MODE_PRIVATE, null);
         GtrailsDB.execSQL(
-        "CREATE TABLE IF NOT EXISTS user (user_id INTEGER PRIMARY KEY AUTOINCREMENT, user_dev_id INTEGER, " +
-                "first_name VARCHAR, last_name VARCHAR, gender VARCHAR, email VARCHAR, city VARCHAR, country VARCHAR, " +
+        "CREATE TABLE IF NOT EXISTS gt_user (user_id INTEGER PRIMARY KEY AUTOINCREMENT, user_dev_id INTEGER, " +
+                "fb_id VARCHAR,first_name VARCHAR, last_name VARCHAR, gender VARCHAR, email VARCHAR, current_location VARCHAR, " +
                 "created_on DATETIME DEFAULT CURRENT_TIMESTAMP, modified_on DATETIME DEFAULT CURRENT_TIMESTAMP);");
 
         GtrailsDB.execSQL(
