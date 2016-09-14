@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by aviator on 29/08/16.
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class Marker extends BaseRecord {
+public class Mark extends BaseRecord {
 
     @JsonProperty("loca_id")
     public int loca_id;

@@ -17,8 +17,8 @@ import android.widget.TextView;
 
 import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.adapters.LocationListAdapter;
-import com.theleafapps.pro.geotrails.models.Marker;
-import com.theleafapps.pro.geotrails.models.multiples.Markers;
+import com.theleafapps.pro.geotrails.models.Mark;
+import com.theleafapps.pro.geotrails.models.multiples.Marks;
 import com.theleafapps.pro.geotrails.utils.DbHelper;
 
 public class LocationListActivity extends AppCompatActivity {
@@ -27,7 +27,7 @@ public class LocationListActivity extends AppCompatActivity {
     RecyclerView locationListRecyclerView;
     TextView no_location_tv;
     ImageView mark_now_button;
-    Markers markers;
+    Marks markers;
     Toolbar toolbar;
     ActionBar actionBar;
 
@@ -84,9 +84,9 @@ public class LocationListActivity extends AppCompatActivity {
         locationListRecyclerView.setLayoutManager(linearLayoutManager);
     }
 
-    private Markers getAllMarkers() {
+    private Marks getAllMarkers() {
 
-        Markers markers = new Markers();
+        Marks markers = new Marks();
         Cursor c = DbHelper.GtrailsDB.rawQuery("SELECT loca_id,user_lat,user_long,user_id,user_add,loca_title,geocode_add, " +
                 "loca_desc,is_star from marker ORDER BY modified_on DESC", null);
 
@@ -103,7 +103,7 @@ public class LocationListActivity extends AppCompatActivity {
         if(c != null && c.getCount()!=0){
             c.moveToFirst();
             do{
-                Marker marker       =   new Marker();
+                Mark marker         =   new Mark();
                 marker.loca_id      =   c.getInt(locIdIndex);
                 marker.user_lat     =   c.getDouble(userLatIndex);
                 marker.user_long    =   c.getDouble(userLongIndex);
@@ -116,6 +116,7 @@ public class LocationListActivity extends AppCompatActivity {
                 markers.markerList.add(marker);
             }while(c.moveToNext());
         }
+        c.close();
         return markers;
     }
 

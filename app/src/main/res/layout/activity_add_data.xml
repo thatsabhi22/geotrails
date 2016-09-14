@@ -64,18 +64,18 @@
                 android:layout_below="@+id/reverse_geo_add_tv"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="15dp"
-                android:minWidth="150dp"
+                android:minWidth="300dp"
                 android:maxLines="1"
                 android:hint="Title "
                 android:nextFocusDown="@+id/location_user_address_et"
                 android:gravity="center_horizontal"
                 android:singleLine="true"
-                android:maxLength="60" />
+                android:maxLength="60"
+                android:inputType="textFilter" />
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
                 android:nextFocusDown="@+id/location_desc_et"
                 android:ems="10"
                 android:id="@+id/location_user_address_et"
@@ -86,12 +86,14 @@
                 android:layout_below="@+id/location_title_et"
                 android:gravity="center_horizontal"
                 android:maxLines="2"
-                android:maxLength="250" />
+                android:maxLength="250"
+                android:minWidth="300dp"
+                android:inputType="textFilter|textMultiLine" />
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
+                android:inputType="textFilter|textMultiLine"
                 android:ems="10"
                 android:id="@+id/location_desc_et"
                 android:layout_below="@+id/location_user_address_et"
@@ -101,7 +103,8 @@
                 android:hint="Write something about this place"
                 android:gravity="center_horizontal"
                 android:maxLines="3"
-                android:maxLength="300" />
+                android:maxLength="300"
+                android:minWidth="300dp" />
 
             <Button
                 android:layout_width="wrap_content"

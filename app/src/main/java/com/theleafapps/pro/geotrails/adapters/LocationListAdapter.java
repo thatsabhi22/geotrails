@@ -17,8 +17,8 @@ import android.widget.Toast;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.theleafapps.pro.geotrails.R;
-import com.theleafapps.pro.geotrails.models.Marker;
-import com.theleafapps.pro.geotrails.models.multiples.Markers;
+import com.theleafapps.pro.geotrails.models.Mark;
+import com.theleafapps.pro.geotrails.models.multiples.Marks;
 import com.theleafapps.pro.geotrails.utils.DbHelper;
 import com.theleafapps.pro.geotrails.utils.MySingleton;
 
@@ -31,11 +31,11 @@ public class LocationListAdapter extends
     DbHelper dbHelper;
     Context mContext;
     LayoutInflater inflater;
-    Markers markers;
-    Marker current;
+    Marks markers;
+    Mark current;
     ImageLoader mImageLoader;
 
-    public LocationListAdapter(Context context, Markers markers){
+    public LocationListAdapter(Context context, Marks markers){
         inflater                =   LayoutInflater.from(context);
         this.mContext           =   context;
         this.markers            =   markers;

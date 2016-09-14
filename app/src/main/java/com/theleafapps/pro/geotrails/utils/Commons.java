@@ -17,4 +17,9 @@ public class Commons {
 
     public static String update_usr_st =  "UPDATE gt_user SET user_dev_id = ?,fb_id = ?,first_name = ?,last_name = ?,gender = ?," +
             "email = ?,current_location = ? WHERE user_id = ?";
+
+    public static String insert_marker_st = "INSERT INTO marker (user_lat,user_long,user_id,user_add,loca_title," +
+            "loca_desc,geocode_add,is_star,is_sync) values (?,?,?,?,?,?,?,?,?);";
+
+    public static String update_marker_sync = "UPDATE marker SET is_sync=1";
 }

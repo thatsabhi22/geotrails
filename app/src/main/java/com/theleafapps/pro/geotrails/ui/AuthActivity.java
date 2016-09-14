@@ -23,7 +23,6 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.Auth;
 import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.models.User;
 import com.theleafapps.pro.geotrails.models.multiples.Users;

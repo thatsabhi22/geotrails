@@ -54,13 +54,13 @@ public class DbHelper extends SQLiteOpenHelper {
         GtrailsDB     = context.openOrCreateDatabase("geoTrailsDB", Context.MODE_PRIVATE, null);
         GtrailsDB.execSQL(
         "CREATE TABLE IF NOT EXISTS gt_user (user_id INTEGER PRIMARY KEY AUTOINCREMENT, user_dev_id INTEGER, " +
-                "fb_id VARCHAR,first_name VARCHAR, last_name VARCHAR, gender VARCHAR, email VARCHAR, current_location VARCHAR, " +
+                "fb_id VARCHAR,first_name VARCHAR, last_name VARCHAR, gender VARCHAR, email VARCHAR, current_location VARCHAR, is_sync INTEGER, " +
                 "created_on DATETIME DEFAULT CURRENT_TIMESTAMP, modified_on DATETIME DEFAULT CURRENT_TIMESTAMP);");
 
         GtrailsDB.execSQL(
         "CREATE TABLE IF NOT EXISTS marker (loca_id INTEGER PRIMARY KEY AUTOINCREMENT, user_lat DOUBLE, " +
                 "user_long DOUBLE, user_id INTEGER, user_add VARCHAR, loca_title VARCHAR, loca_desc VARCHAR, geocode_add VARCHAR, " +
-                "is_star INTEGER, created_on DATETIME DEFAULT CURRENT_TIMESTAMP, modified_on DATETIME DEFAULT CURRENT_TIMESTAMP);");
+                "is_star INTEGER,is_sync INTEGER, created_on DATETIME DEFAULT CURRENT_TIMESTAMP, modified_on DATETIME DEFAULT CURRENT_TIMESTAMP);");
 
         GtrailsDB.execSQL(
         "CREATE TABLE IF NOT EXISTS image (image_id INTEGER PRIMARY KEY AUTOINCREMENT, loca_id INTEGER, " +

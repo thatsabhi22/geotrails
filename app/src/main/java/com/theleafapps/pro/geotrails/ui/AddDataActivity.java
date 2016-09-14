@@ -29,17 +29,23 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.theleafapps.pro.geotrails.R;
+import com.theleafapps.pro.geotrails.models.Mark;
+import com.theleafapps.pro.geotrails.models.multiples.Marks;
+import com.theleafapps.pro.geotrails.tasks.AddMarkerTask;
+import com.theleafapps.pro.geotrails.utils.Commons;
 import com.theleafapps.pro.geotrails.utils.DbHelper;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class AddDataActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     DbHelper dbHelper;
     GoogleMap mMap;
     Toolbar toolbar;
+    boolean result;
     double userLat,userLong;
     TextView geo_code_add_tv;
     EditText location_title_et,location_user_address_et,location_desc_et;
@@ -108,26 +114,56 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                 if(TextUtils.isEmpty(location_title_et.getText())){
                     location_title_et.setError("Atleast Put a title to this location");
                 }else{
-                    dbHelper = new DbHelper(AddDataActivity.this);
-                    SQLiteDatabase db = dbHelper.getWritableDatabase();
-                    SQLiteStatement stmt = db.compileStatement(
-                            "INSERT INTO marker (user_lat,user_long,user_id,user_add,loca_title," +
-                                    "loca_desc,geocode_add,is_star) values (?,?,?,?,?,?,?,?);");
-                    stmt.bindDouble(1, userLat);
-                    stmt.bindDouble(2, userLong);
-                    stmt.bindLong(3, 1);
-                    stmt.bindString(4, location_user_address_et.getText().toString());
-                    stmt.bindString(5, location_title_et.getText().toString());
-                    stmt.bindString(6, location_desc_et.getText().toString());
-                    stmt.bindString(7, geo_code_add_tv.getText().toString());
-                    stmt.bindLong(8, 0);
-                    stmt.execute();
+                    try{
+                        dbHelper                =   new DbHelper(AddDataActivity.this);
+                        SQLiteDatabase db       =   dbHelper.getWritableDatabase();
+                        SQLiteStatement stmt    =   db.compileStatement(Commons.insert_marker_st);
+                        stmt.bindDouble(1, userLat);
+                        stmt.bindDouble(2, userLong);
+                        stmt.bindLong(3, 1);
+                        stmt.bindString(4, location_user_address_et.getText().toString());
+                        stmt.bindString(5, location_title_et.getText().toString());
+                        stmt.bindString(6, location_desc_et.getText().toString());
+                        stmt.bindString(7, geo_code_add_tv.getText().toString());
+                        stmt.bindLong(8, 0);
+                        stmt.bindLong(9, 0);
+                        stmt.execute();
+                        Log.d(TAG, "Records added");
 
-                    Log.d(TAG, "Records added");
+                        Marks markers = new Marks();
+
+                        Mark marker         =   new Mark();
+                        marker.user_lat     =   userLat;
+                        marker.user_long    =   userLong;
+                        marker.user_id      =   1;
+                        marker.user_add     =   location_user_address_et.getText().toString();
+                        marker.loca_title   =   location_title_et.getText().toString();
+                        marker.loca_desc    =   location_desc_et.getText().toString();
+                        marker.geo_code_add =   geo_code_add_tv.getText().toString();
+                        marker.is_star      =   0;
+                        markers.markerList.add(marker);
+
+                        AddMarkerTask addMarkerTask = new AddMarkerTask(AddDataActivity.this,markers);
+                        result = addMarkerTask.execute().get();
+
+                        if(result) {
+                            SQLiteStatement stmt1 = db.compileStatement(Commons.update_marker_sync);
+                            stmt1.execute();
+                        }
+
+                        Intent intent = new Intent(AddDataActivity.this,LocationListActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         });
-
     }
 
     @Override
