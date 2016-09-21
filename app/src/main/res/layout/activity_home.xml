@@ -25,6 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/list_button"
+        android:clickable="true"
         android:src="@drawable/home_list_icon"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
@@ -36,7 +37,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/flag"
+        android:background="@null"
         android:id="@+id/mark_location_button"
+        android:clickable="true"
         android:layout_marginBottom="103dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />

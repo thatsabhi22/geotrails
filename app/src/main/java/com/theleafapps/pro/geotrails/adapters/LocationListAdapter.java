@@ -3,6 +3,7 @@ package com.theleafapps.pro.geotrails.adapters;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -83,6 +84,12 @@ public class LocationListAdapter extends
             holder.fav_image_view.setImageResource(R.drawable.heart_fill_28);
         }
 
+        if(current.is_sync == 1){
+            holder.sync_image_view.setBackgroundColor(Color.parseColor("#388E3C"));
+        }else{
+            holder.sync_image_view.setBackgroundColor(Color.RED);
+        }
+
     }
 
     @Override
@@ -102,7 +109,7 @@ public class LocationListAdapter extends
 
         NetworkImageView locationImageView;
         TextView location_title_tv,location_user_add_tv,location_user_desc_tv;
-        ImageView fav_image_view;
+        ImageView fav_image_view,sync_image_view;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -112,6 +119,7 @@ public class LocationListAdapter extends
             location_user_add_tv    = (TextView) itemView.findViewById(R.id.location_user_add_tv);
             location_user_desc_tv   = (TextView) itemView.findViewById(R.id.location_user_desc_tv);
             fav_image_view          = (ImageView) itemView.findViewById(R.id.fav_image_view);
+            sync_image_view         = (ImageView) itemView.findViewById(R.id.sync_indicator);
 
             fav_image_view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -131,7 +139,6 @@ public class LocationListAdapter extends
                         markers.markerList.get(position).is_star = 0;
                         updateFav(markers.markerList.get(position).loca_id,0);
                     }
-
                     Log.d("Tangho", "onClick: this is sit");
                 }
             });

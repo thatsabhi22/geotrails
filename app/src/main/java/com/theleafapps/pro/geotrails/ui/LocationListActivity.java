@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,7 +43,7 @@ public class LocationListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         actionBar.setIcon(R.drawable.logo_small);
         actionBar.setTitle("  GeoTrails");
 
@@ -88,7 +89,7 @@ public class LocationListActivity extends AppCompatActivity {
 
         Marks markers = new Marks();
         Cursor c = DbHelper.GtrailsDB.rawQuery("SELECT loca_id,user_lat,user_long,user_id,user_add,loca_title,geocode_add, " +
-                "loca_desc,is_star from marker ORDER BY modified_on DESC", null);
+                "loca_desc,is_star,is_sync from marker ORDER BY modified_on DESC", null);
 
         int locIdIndex      = c.getColumnIndex("loca_id");
         int userLatIndex    = c.getColumnIndex("user_lat");
@@ -98,7 +99,8 @@ public class LocationListActivity extends AppCompatActivity {
         int locTitleIndex   = c.getColumnIndex("loca_title");
         int locaDescIndex   = c.getColumnIndex("loca_desc");
         int geocodeAddIndex = c.getColumnIndex("geocode_add");
-        int isStarIndex    = c.getColumnIndex("is_star");
+        int isStarIndex     = c.getColumnIndex("is_star");
+        int isSyncIndex     = c.getColumnIndex("is_sync");
 
         if(c != null && c.getCount()!=0){
             c.moveToFirst();
@@ -113,6 +115,7 @@ public class LocationListActivity extends AppCompatActivity {
                 marker.loca_desc    =   c.getString(locaDescIndex);
                 marker.geo_code_add =   c.getString(geocodeAddIndex);
                 marker.is_star      =   c.getInt(isStarIndex);
+                marker.is_sync      =   c.getInt(isSyncIndex);
                 markers.markerList.add(marker);
             }while(c.moveToNext());
         }
@@ -130,14 +133,32 @@ public class LocationListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
-        switch (item.getItemId()) {
-            case R.id.menu_location_list:
-                intent = new Intent(this,LocationListActivity.class);
-                intent.putExtra("caller","LocationListActivity");
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        try {
+            switch (item.getItemId()) {
+                case R.id.menu_map:
+                    intent = new Intent(this, HomeActivity.class);
+                    intent.putExtra("caller", "LocationListActivity");
+                    startActivity(intent);
+                    return true;
+                case android.R.id.home:
+                    String caller = getIntent().getStringExtra("caller");
+
+                    if (!TextUtils.isEmpty(caller)) {
+                        Class callerClass = Class.forName(getPackageName() + ".ui." + caller);
+                        intent = new Intent(this, callerClass);
+
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        finish();
+                    }
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
+        return false;
     }
+
 }

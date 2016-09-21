@@ -27,7 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/location_list_screen"
         android:scrollbars="vertical"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:paddingTop="5dp" />
 
     <TextView
         android:layout_width="wrap_content"

@@ -116,7 +116,7 @@ public class AuthActivity extends AppCompatActivity {
             Commons.accessT = AccessToken.getCurrentAccessToken();
 
             if (Commons.accessT != null) {
-                Toast.makeText(this, "access Token > " + Commons.accessT, Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "access Token > " + Commons.accessT, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
             }
