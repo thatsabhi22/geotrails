@@ -61,7 +61,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     TextView geo_code_add_tv;
     EditText location_title_et,location_user_address_et,location_desc_et;
     ImageButton mark_button;
-    ImageView add_location_image_button;
+//    ImageView add_location_image_button;
     String TAG = "Tangho";
     Address geoAddress;
     ActionBar actionBar;
@@ -91,13 +91,13 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         userLong                    =   recIntent.getDoubleExtra("userLong",0);
         inflater                    =   (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        thumbnailContainer          =   (RelativeLayout) findViewById(R.id.thumbnailContainer);
+//        thumbnailContainer          =   (RelativeLayout) findViewById(R.id.thumbnailContainer);
         geo_code_add_tv             =   (TextView) findViewById(R.id.reverse_geo_add_tv);
         location_title_et           =   (EditText) findViewById(R.id.location_title_et);
         location_user_address_et    =   (EditText) findViewById(R.id.location_user_address_et);
         location_desc_et            =   (EditText) findViewById(R.id.location_desc_et);
         mark_button                 =   (ImageButton) findViewById(R.id.mark_button);
-        add_location_image_button   =   (ImageView) findViewById(R.id.add_location_image_button);
+//        add_location_image_button   =   (ImageView) findViewById(R.id.add_location_image_button);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.addDataSmallMap);
@@ -130,13 +130,14 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
             //e.printStackTrace();
         }
 
-        add_location_image_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent chooseImageIntent = ImagePicker.getPickImageIntent(AddDataActivity.this);
-                startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
-            }
-        });
+//        Commented for Image
+//        add_location_image_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent chooseImageIntent = ImagePicker.getPickImageIntent(AddDataActivity.this);
+//                startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
+//            }
+//        });
 
         mark_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,10 +203,10 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         try {
             switch (requestCode) {
                 case PICK_IMAGE_ID:
-                    Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
-                    saveToInternalStorage(bitmap);
-
-                    // TODO use bitmap
+                    if(data!=null){
+                        Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
+                        saveToInternalStorage(bitmap);
+                    }
                     break;
                 default:
                     super.onActivityResult(requestCode, resultCode, data);
@@ -225,7 +226,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         float logicalDensity = metrics.density;
 
         int square = convertToDp(50);
-        Bitmap bitmap = Bitmap.createScaledBitmap(bitmapImage, square, square, true);
+        //Bitmap bitmap = Bitmap.createScaledBitmap(bitmapImage, square, square, true);
 
         // path to /data/data/yourapp/app_data/imageDir
 
@@ -251,7 +252,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
             imageList.add("img_"+ random);
 
             thumbnail  = (ImageView) inflater.inflate(R.layout.thumbnail_image_add_data,null);
-            thumbnail.setImageBitmap(bitmap);
+            thumbnail.setImageBitmap(bitmapImage);
             thumbnailContainer.addView(thumbnail);
         } catch (Exception e) {
             e.printStackTrace();
