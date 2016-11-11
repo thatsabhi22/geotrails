@@ -117,27 +117,6 @@
                 android:layout_marginTop="120dp"
                 android:layout_below="@+id/location_desc_et" />
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/images_container_layout"
-                android:layout_below="@+id/add_pictures_tv"
-                android:layout_alignLeft="@+id/add_pictures_tv"
-                android:layout_alignStart="@+id/add_pictures_tv"
-                android:layout_marginTop="10dp">
-
-            </RelativeLayout>
-
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/plus_icon"
-                android:id="@+id/add_location_image_button"
-                android:layout_below="@+id/add_pictures_tv"
-                android:layout_toRightOf="@+id/images_container_layout"
-                android:layout_toEndOf="@+id/images_container_layout"
-                android:layout_marginTop="10dp" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -149,6 +128,21 @@
                 android:layout_alignLeft="@+id/addDataSmallMap"
                 android:layout_alignStart="@+id/addDataSmallMap"
                 android:layout_marginTop="20dp" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/add_pictures_tv"
+                android:layout_alignLeft="@+id/add_pictures_tv"
+                android:layout_alignStart="@+id/add_pictures_tv"
+                android:id="@+id/thumbnailContainer">
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/plus_icon"
+                    android:id="@+id/add_location_image_button"
+                    android:layout_marginTop="10dp" />
+            </RelativeLayout>
 
         </RelativeLayout>
     </ScrollView>

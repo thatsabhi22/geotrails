@@ -9,12 +9,13 @@ import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +46,7 @@ import com.theleafapps.pro.geotrails.utils.ImagePicker;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -62,6 +65,11 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     String TAG = "Tangho";
     Address geoAddress;
     ActionBar actionBar;
+    String imageFolderName;
+    List<String> imageList;
+    LayoutInflater inflater;
+    RelativeLayout thumbnailContainer;
+    ImageView thumbnail;
     private static final int PICK_IMAGE_ID = 234;
 
     @Override
@@ -78,9 +86,12 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         actionBar.setTitle("  Add Info");
 
         Intent recIntent            =   getIntent();
+        imageList                   =   new ArrayList<String>();
         userLat                     =   recIntent.getDoubleExtra("userLat",0);
         userLong                    =   recIntent.getDoubleExtra("userLong",0);
+        inflater                    =   (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        thumbnailContainer          =   (RelativeLayout) findViewById(R.id.thumbnailContainer);
         geo_code_add_tv             =   (TextView) findViewById(R.id.reverse_geo_add_tv);
         location_title_et           =   (EditText) findViewById(R.id.location_title_et);
         location_user_address_et    =   (EditText) findViewById(R.id.location_user_address_et);
@@ -193,6 +204,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                 case PICK_IMAGE_ID:
                     Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
                     saveToInternalStorage(bitmap);
+
                     // TODO use bitmap
                     break;
                 default:
@@ -205,17 +217,42 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
     private String saveToInternalStorage(Bitmap bitmapImage) throws IOException {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+
+        ContextWrapper cw   =   new ContextWrapper(getApplicationContext());
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        float logicalDensity = metrics.density;
+
+        int square = convertToDp(50);
+        Bitmap bitmap = Bitmap.createScaledBitmap(bitmapImage, square, square, true);
+
         // path to /data/data/yourapp/app_data/imageDir
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+
+        imageFolderName     =   Commons.randomAlphaNumeric(10);
+        File directory      =   cw.getDir("imageDir", Context.MODE_PRIVATE);
+//        FileUtils.forceMkdir(new File(directory.getPath()+"/"+imageFolderName));
+
+//        directory           =   new File(directory.getPath()+"/"+imageFolderName);
+
         // Create imageDir
-        File mypath=new File(directory,"profile.jpg");
+        int minimum = 1;
+        int maximum = 100;
+        int random ;
+
+        random      =   minimum + (int)(Math.random() * maximum);
+        File mypath =   new File(directory,"img_"+ random +".jpg");
 
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(mypath);
             // Use the compress method on the BitMap object to write image to the OutputStream
             bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            imageList.add("img_"+ random);
+
+            thumbnail  = (ImageView) inflater.inflate(R.layout.thumbnail_image_add_data,null);
+            thumbnail.setImageBitmap(bitmap);
+            thumbnailContainer.addView(thumbnail);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -224,10 +261,16 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         return directory.getAbsolutePath();
     }
 
+    public int convertToDp(int input) {
+        // Get the screen's density scale
+         final float scale = getResources().getDisplayMetrics().density;
+        // Convert the dps to pixels, based on density scale
+            return (int) (input * scale + 0.5f);
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         // Add a marker in Sydney and move the camera
         //LatLng sydney = new LatLng(-34, 151);
         LatLng sydney = new LatLng(userLat,userLong);
