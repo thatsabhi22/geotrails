@@ -100,7 +100,6 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
                         startActivity(intent);
                     } else {
                         Toast.makeText(HomeActivity.this,"Enable your Location",Toast.LENGTH_SHORT).show();
-
                     }
                 } else {
                     Intent intent = new Intent(HomeActivity.this, AuthActivity.class);
@@ -149,7 +148,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
                                 .snippet("Mark Your Location")
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_used)));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13f));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12f));
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
     }

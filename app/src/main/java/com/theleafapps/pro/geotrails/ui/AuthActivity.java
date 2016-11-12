@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -43,6 +42,7 @@ public class AuthActivity extends AppCompatActivity {
     private AccessTokenTracker accessTokenTracker;
     private ImageButton skip_button;
     private DbHelper dbHelper;
+    Intent intent;
     String TAG = "Tangho";
 
     @Override
@@ -89,6 +89,28 @@ public class AuthActivity extends AppCompatActivity {
                     parameters.putString("fields", "id,first_name,last_name,email,gender,location");
                     request.setParameters(parameters);
                     request.executeAsync();
+
+                    accessTokenTracker = new AccessTokenTracker() {
+                        @Override
+                        protected void onCurrentAccessTokenChanged(
+                                AccessToken oldAccessToken,
+                                AccessToken currentAccessToken) {
+                            // Set the access token using
+                            // currentAccessToken when it's loaded or set.
+                        }
+                    };
+                    // If the access token is available already assign it.
+                    Commons.accessT = AccessToken.getCurrentAccessToken();
+
+                    if (Commons.accessT != null) {
+                        //Toast.makeText(this, "access Token > " + Commons.accessT, Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(AuthActivity.this, HomeActivity.class);
+                        startActivity(intent);
+                    }
+
+                    intent      =   new Intent(AuthActivity.this,LoadingActivity.class);
+                    intent.putExtra("goto","HomeActivity");
+                    startActivity(intent);
                 }
 
                 @Override
@@ -101,25 +123,6 @@ public class AuthActivity extends AppCompatActivity {
 //                info.setText("Login attempt failed.");
                 }
             });
-
-        
-            accessTokenTracker = new AccessTokenTracker() {
-                @Override
-                protected void onCurrentAccessTokenChanged(
-                        AccessToken oldAccessToken,
-                        AccessToken currentAccessToken) {
-                    // Set the access token using
-                    // currentAccessToken when it's loaded or set.
-                }
-            };
-            // If the access token is available already assign it.
-            Commons.accessT = AccessToken.getCurrentAccessToken();
-
-            if (Commons.accessT != null) {
-                //Toast.makeText(this, "access Token > " + Commons.accessT, Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(this, HomeActivity.class);
-                startActivity(intent);
-            }
     }
 
     private void addUser(JSONObject object) {

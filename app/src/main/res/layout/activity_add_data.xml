@@ -38,7 +38,7 @@
                 android:id="@+id/addDataSmallMap"
                 android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="280dp"
-                android:layout_height="100dp"
+                android:layout_height="120dp"
                 tools:context=".ui.AddDataActivity"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
@@ -114,7 +114,7 @@
                 android:background="@color/windowBackground"
                 android:layout_alignParentBottom="false"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="60dp"
                 android:layout_below="@+id/location_desc_et" />
 
             <!--
