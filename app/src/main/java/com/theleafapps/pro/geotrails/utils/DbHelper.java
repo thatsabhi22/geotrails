@@ -58,7 +58,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 "created_on DATETIME DEFAULT CURRENT_TIMESTAMP, modified_on DATETIME DEFAULT CURRENT_TIMESTAMP);");
 
         GtrailsDB.execSQL(
-        "CREATE TABLE IF NOT EXISTS marker (loca_id INTEGER PRIMARY KEY AUTOINCREMENT, user_lat DOUBLE, " +
+        "CREATE TABLE IF NOT EXISTS marker (loca_id INTEGER, ofl_loca_id INTEGER, user_lat DOUBLE, " +
                 "user_long DOUBLE, user_id INTEGER, user_add VARCHAR, loca_title VARCHAR, loca_desc VARCHAR, geocode_add VARCHAR, " +
                 "is_star INTEGER,is_sync INTEGER, created_on DATETIME DEFAULT CURRENT_TIMESTAMP, modified_on DATETIME DEFAULT CURRENT_TIMESTAMP);");
 

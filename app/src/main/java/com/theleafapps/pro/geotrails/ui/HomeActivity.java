@@ -97,6 +97,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
                         Intent intent = new Intent(HomeActivity.this, AddDataActivity.class);
                         intent.putExtra("userLat", location.getLatitude());
                         intent.putExtra("userLong", location.getLongitude());
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     } else {
                         Toast.makeText(HomeActivity.this,"Enable your Location",Toast.LENGTH_SHORT).show();

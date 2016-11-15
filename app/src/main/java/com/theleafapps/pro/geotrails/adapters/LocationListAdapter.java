@@ -16,12 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.models.Mark;
 import com.theleafapps.pro.geotrails.models.multiples.Marks;
+import com.theleafapps.pro.geotrails.tasks.UpdateMarkerIsStarTask;
 import com.theleafapps.pro.geotrails.utils.DbHelper;
 import com.theleafapps.pro.geotrails.utils.MySingleton;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by aviator on 29/08/16.
@@ -54,7 +56,7 @@ public class LocationListAdapter extends
         current = markers.markerList.get(position);
         mImageLoader = MySingleton.getInstance(mContext).getImageLoader();
 
-        holder.locationImageView.setImageUrl("http://dummyimage.com/54x54/000/fff&text=0",mImageLoader);
+//        holder.locationImageView.setImageUrl("http://dummyimage.com/54x54/000/fff&text=0",mImageLoader);
 
         if (!TextUtils.isEmpty(current.loca_title)) {
             if (current.loca_title.length() > 10) {
@@ -78,7 +80,7 @@ public class LocationListAdapter extends
         holder.location_user_add_tv.setText(current.user_add);
         holder.location_user_desc_tv.setText(current.loca_desc);
 
-        if(current.is_star == 0){
+        if(TextUtils.equals(current.is_star,"false")){
             holder.fav_image_view.setImageResource(R.drawable.heart_empty_28);
         }else{
             holder.fav_image_view.setImageResource(R.drawable.heart_fill_28);
@@ -107,14 +109,14 @@ public class LocationListAdapter extends
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
 
-        NetworkImageView locationImageView;
+        ImageView locationImageView;
         TextView location_title_tv,location_user_add_tv,location_user_desc_tv;
         ImageView fav_image_view,sync_image_view;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            locationImageView       = (NetworkImageView) itemView.findViewById(R.id.locationImageView);
+            locationImageView       = (ImageView) itemView.findViewById(R.id.locationImageView);
             location_title_tv       = (TextView) itemView.findViewById(R.id.location_title_tv);
             location_user_add_tv    = (TextView) itemView.findViewById(R.id.location_user_add_tv);
             location_user_desc_tv   = (TextView) itemView.findViewById(R.id.location_user_desc_tv);
@@ -130,14 +132,16 @@ public class LocationListAdapter extends
                     RecyclerView rv     =   (RecyclerView) cardView.getParent();
                     int position        =   rv.getChildLayoutPosition(cardView);
 
-                    if(markers.markerList.get(position).is_star == 0){
+                    if(TextUtils.equals(markers.markerList.get(position).is_star,"false")){
                         fav_image_view.setImageResource(R.drawable.heart_fill_28);
-                        markers.markerList.get(position).is_star = 1;
-                        updateFav(markers.markerList.get(position).loca_id,1);
+                        markers.markerList.get(position).is_star = "true";
+                        updateFav(markers.markerList.get(position).loca_id,1,0);
+                        updateCloudMark(markers.markerList.get(position),"true");
                     }else{
                         fav_image_view.setImageResource(R.drawable.heart_empty_28);
-                        markers.markerList.get(position).is_star = 0;
-                        updateFav(markers.markerList.get(position).loca_id,0);
+                        markers.markerList.get(position).is_star = "false";
+                        updateFav(markers.markerList.get(position).loca_id,0,0);
+                        updateCloudMark(markers.markerList.get(position),"false");
                     }
                     Log.d("Tangho", "onClick: this is sit");
                 }
@@ -145,12 +149,33 @@ public class LocationListAdapter extends
         }
     }
 
-    private void updateFav(int loca_id, int is_star) {
-        dbHelper = new DbHelper(mContext);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        SQLiteStatement stmt = db.compileStatement("UPDATE marker SET is_star = ? where loca_id = ?;");
-        stmt.bindString(1, String.valueOf(is_star));
-        stmt.bindString(2, String.valueOf(loca_id));
-        stmt.execute();
+    private void updateFav(int loca_id, int is_star, int is_sync) {
+        try {
+            dbHelper = new DbHelper(mContext);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            SQLiteStatement stmt = db.compileStatement("UPDATE marker SET is_star = ?, is_sync = ? where loca_id = ?;");
+            stmt.bindString(1, String.valueOf(is_star));
+            stmt.bindString(2, String.valueOf(is_sync));
+            stmt.bindString(3, String.valueOf(loca_id));
+            stmt.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateCloudMark(Mark marker, String is_star){
+        try {
+            marker.is_star = is_star;
+            Marks markers = new Marks();
+            markers.markerList.add(marker);
+
+            UpdateMarkerIsStarTask updateMarkerIsStarTask = new UpdateMarkerIsStarTask(mContext, markers);
+            updateMarkerIsStarTask.execute().get();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 }

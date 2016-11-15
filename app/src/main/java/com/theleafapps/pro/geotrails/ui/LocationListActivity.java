@@ -22,20 +22,29 @@ import com.theleafapps.pro.geotrails.models.Mark;
 import com.theleafapps.pro.geotrails.models.multiples.Marks;
 import com.theleafapps.pro.geotrails.utils.DbHelper;
 
+import java.util.ArrayList;
+
 public class LocationListActivity extends AppCompatActivity {
 
     LocationListAdapter locationListAdapter;
     RecyclerView locationListRecyclerView;
+    double userLat,userLong;
     TextView no_location_tv;
     ImageView mark_now_button;
     Marks markers;
     Toolbar toolbar;
     ActionBar actionBar;
+    String caller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_list);
+
+        Intent recIntent            =   getIntent();
+        userLat                     =   recIntent.getDoubleExtra("userLat",0);
+        userLong                    =   recIntent.getDoubleExtra("userLong",0);
+        caller                      =   recIntent.getStringExtra("caller");
 
         toolbar         =   (Toolbar) findViewById(R.id.toolbar_location_list);
         no_location_tv  =   (TextView) findViewById(R.id.no_location_tv);
@@ -114,7 +123,7 @@ public class LocationListActivity extends AppCompatActivity {
                 marker.loca_title   =   c.getString(locTitleIndex);
                 marker.loca_desc    =   c.getString(locaDescIndex);
                 marker.geo_code_add =   c.getString(geocodeAddIndex);
-                marker.is_star      =   c.getInt(isStarIndex);
+                marker.is_star      =   c.getInt(isStarIndex) == 1 ? "true" : "false";
                 marker.is_sync      =   c.getInt(isSyncIndex);
                 markers.markerList.add(marker);
             }while(c.moveToNext());
@@ -128,6 +137,21 @@ public class LocationListActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_location_list, menu);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent;
+        if(TextUtils.equals(caller,"AddDataActivity")){
+            intent = new Intent(this,AddDataActivity.class);
+            intent.putExtra("userLat",userLat);
+            intent.putExtra("userLong",userLong);
+        }else {
+            intent = new Intent(this,HomeActivity.class);
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
@@ -148,6 +172,10 @@ public class LocationListActivity extends AppCompatActivity {
                         intent = new Intent(this, callerClass);
 
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        if(TextUtils.equals(caller,"AddDataActivity")){
+                            intent.putExtra("userLat",userLat);
+                            intent.putExtra("userLong",userLong);
+                        }
                         startActivity(intent);
                         finish();
                     }

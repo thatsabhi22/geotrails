@@ -2,6 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/location_list_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,13 +19,13 @@
         android:layout_height="match_parent"
         android:paddingBottom="15dp">
 
-        <com.android.volley.toolbox.NetworkImageView
+        <ImageView
             android:layout_width="54dp"
             android:layout_height="54dp"
-            android:src="@drawable/noimage"
+            android:src="@drawable/noimageflag"
             android:id="@+id/locationImageView"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:layout_marginRight="10dp" />
 
         <TextView

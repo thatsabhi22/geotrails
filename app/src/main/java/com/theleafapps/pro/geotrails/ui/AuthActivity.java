@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -105,11 +106,13 @@ public class AuthActivity extends AppCompatActivity {
                     if (Commons.accessT != null) {
                         //Toast.makeText(this, "access Token > " + Commons.accessT, Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(AuthActivity.this, HomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
 
                     intent      =   new Intent(AuthActivity.this,LoadingActivity.class);
                     intent.putExtra("goto","HomeActivity");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
 
@@ -120,9 +123,18 @@ public class AuthActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(FacebookException error) {
-//                info.setText("Login attempt failed.");
+                    Toast.makeText(AuthActivity.this,"Could not login to facebook. Please check your Internet Connectivity.",Toast.LENGTH_LONG).show();
+//                  info.setText("Login attempt failed.");
                 }
             });
+
+        Commons.accessT = AccessToken.getCurrentAccessToken();
+        if (Commons.accessT != null) {
+            //Toast.makeText(this, "access Token > " + Commons.accessT, Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(AuthActivity.this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
     }
 
     private void addUser(JSONObject object) {

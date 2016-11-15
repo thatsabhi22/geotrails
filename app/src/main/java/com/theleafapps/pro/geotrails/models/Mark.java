@@ -40,7 +40,7 @@ public class Mark extends BaseRecord {
     public String modified_on;
 
     @JsonProperty("is_star")
-    public int is_star;
+    public String is_star;
 
     @JsonProperty("is_sync")
     public int is_sync;

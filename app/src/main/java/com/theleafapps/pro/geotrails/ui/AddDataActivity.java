@@ -3,6 +3,7 @@ package com.theleafapps.pro.geotrails.ui;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
@@ -123,7 +124,6 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                     geo_code_add_tv.setText(sb.toString());
                 }
             }
-
         } catch (IOException e) {
             geo_code_add_tv.setVisibility(View.GONE);
             Toast.makeText(this,"You're Offline!! , Address could not be determined.",Toast.LENGTH_SHORT).show();
@@ -159,9 +159,16 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                         stmt.bindLong(8, 0);
                         stmt.bindLong(9, 0);
                         stmt.execute();
+
+                        int ofl_loca_id     =   0;
+                        String query        =   Commons.select_last_inserted_loca_id;
+                        Cursor c            =   db.rawQuery(query,null);
+                        if (c != null && c.moveToFirst()) {
+                            ofl_loca_id     =   (int)c.getLong(0);
+                        }
                         Log.d(TAG, "Records added");
 
-                        Marks markers = new Marks();
+                        Marks markers       =   new Marks();
 
                         Mark marker         =   new Mark();
                         marker.user_lat     =   userLat;
@@ -171,20 +178,28 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                         marker.loca_title   =   location_title_et.getText().toString();
                         marker.loca_desc    =   location_desc_et.getText().toString();
                         marker.geo_code_add =   geo_code_add_tv.getText().toString();
-                        marker.is_star      =   0;
+                        marker.is_star      =   "false";
                         markers.markerList.add(marker);
 
                         AddMarkerTask addMarkerTask = new AddMarkerTask(AddDataActivity.this,markers);
                         result = addMarkerTask.execute().get();
 
                         if(result) {
+
                             SQLiteStatement stmt1 = db.compileStatement(Commons.update_marker_sync);
+                            stmt1.bindLong(1,ofl_loca_id);
                             stmt1.execute();
+
+                            SQLiteStatement stmt2 = db.compileStatement(Commons.update_marker_loca_id);
+                            stmt2.bindLong(1,addMarkerTask.locaId);
+                            stmt2.bindLong(1,ofl_loca_id);
+                            stmt2.execute();
+
                         }
 
                         Intent intent = new Intent(AddDataActivity.this,LocationListActivity.class);
                         intent.putExtra("caller", "HomeActivity");
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
 
                     } catch (InterruptedException e) {
@@ -298,13 +313,24 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                 Intent intent;
                 intent = new Intent(this,LocationListActivity.class);
                 intent.putExtra("caller","AddDataActivity");
+                intent.putExtra("userLat",userLat);
+                intent.putExtra("userLong",userLong);
                 startActivity(intent);
                 return true;
             case R.id.menu_map:
                 intent = new Intent(this,HomeActivity.class);
                 intent.putExtra("caller","AddDataActivity");
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 return true;
+            case android.R.id.home:
+                intent = new Intent(this, HomeActivity.class);
+                intent.putExtra("caller","AddDataActivity");
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
