@@ -192,7 +192,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
 
                             SQLiteStatement stmt2 = db.compileStatement(Commons.update_marker_loca_id);
                             stmt2.bindLong(1,addMarkerTask.locaId);
-                            stmt2.bindLong(1,ofl_loca_id);
+                            stmt2.bindLong(2,ofl_loca_id);
                             stmt2.execute();
 
                         }
