@@ -21,9 +21,8 @@ import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.adapters.LocationListAdapter;
 import com.theleafapps.pro.geotrails.models.Mark;
 import com.theleafapps.pro.geotrails.models.multiples.Marks;
+import com.theleafapps.pro.geotrails.utils.Commons;
 import com.theleafapps.pro.geotrails.utils.DbHelper;
-
-import java.util.ArrayList;
 
 public class LocationListActivity extends AppCompatActivity {
 
@@ -32,7 +31,6 @@ public class LocationListActivity extends AppCompatActivity {
     double userLat,userLong;
     TextView no_location_tv;
     ImageView mark_now_button;
-    CardView locationCardView;
     Marks markers;
     Toolbar toolbar;
     ActionBar actionBar;
@@ -99,8 +97,7 @@ public class LocationListActivity extends AppCompatActivity {
     private Marks getAllMarkers() {
 
         Marks markers = new Marks();
-        Cursor c = DbHelper.GtrailsDB.rawQuery("SELECT loca_id,ofl_loca_id,user_lat,user_long,user_id,user_add,loca_title,geocode_add, " +
-                "loca_desc,is_star,is_sync,created_on,modified_on from marker ORDER BY modified_on DESC", null);
+        Cursor c = DbHelper.GtrailsDB.rawQuery(Commons.get_all_markers, null);
 
         int locIdIndex      = c.getColumnIndex("loca_id");
         int oflLocIdIndex   = c.getColumnIndex("ofl_loca_id");

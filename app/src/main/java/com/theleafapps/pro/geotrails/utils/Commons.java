@@ -31,6 +31,11 @@ public class Commons {
     public static String insert_marker_st = "INSERT INTO marker (user_lat,user_long,user_id,user_add,loca_title," +
             "loca_desc,geocode_add,is_star,is_sync,ofl_loca_id) values (?,?,?,?,?,?,?,?,?,(SELECT IFNULL(MAX(ofl_loca_id), 10000) + 1 FROM marker))";
 
+    public static String get_all_markers  = "SELECT loca_id,ofl_loca_id,user_lat,user_long,user_id,user_add,loca_title,geocode_add, " +
+            "loca_desc,is_star,is_sync,created_on,modified_on from marker ORDER BY modified_on DESC";
+
+    public static String update_marker_star_sync_ofl = "UPDATE marker SET is_star = ?, is_sync = ? where ofl_loca_id = ?;";
+
     public static String update_marker_sync = "UPDATE marker SET is_sync=1 where ofl_loca_id=?";
 
     public static String update_marker_loca_id = "UPDATE marker SET loca_id=? where ofl_loca_id=?";

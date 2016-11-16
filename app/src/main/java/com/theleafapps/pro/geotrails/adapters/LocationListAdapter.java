@@ -20,6 +20,7 @@ import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.models.Mark;
 import com.theleafapps.pro.geotrails.models.multiples.Marks;
 import com.theleafapps.pro.geotrails.tasks.UpdateMarkerIsStarTask;
+import com.theleafapps.pro.geotrails.utils.Commons;
 import com.theleafapps.pro.geotrails.utils.DbHelper;
 import com.theleafapps.pro.geotrails.utils.MySingleton;
 
@@ -170,7 +171,7 @@ public class LocationListAdapter extends
         try {
             dbHelper = new DbHelper(mContext);
             SQLiteDatabase db = dbHelper.getWritableDatabase();
-            SQLiteStatement stmt = db.compileStatement("UPDATE marker SET is_star = ?, is_sync = ? where ofl_loca_id = ?;");
+            SQLiteStatement stmt = db.compileStatement(Commons.update_marker_star_sync_ofl);
             stmt.bindString(1, String.valueOf(is_star));
             stmt.bindString(2, String.valueOf(is_sync));
             stmt.bindString(3, String.valueOf(ofl_loca_id));
@@ -185,8 +186,6 @@ public class LocationListAdapter extends
             marker.is_star = is_star;
             Marks markers = new Marks();
             markers.markerList.add(marker);
-
-
 
             UpdateMarkerIsStarTask updateMarkerIsStarTask = new UpdateMarkerIsStarTask(mContext, markers);
             updateMarkerIsStarTask.execute().get();
