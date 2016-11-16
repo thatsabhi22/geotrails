@@ -8,4 +8,10 @@
         android:title="Map"
         app:showAsAction="always"
         />
+    <item
+        android:id="@+id/sync"
+        android:icon="@drawable/sync"
+        android:title="Sync"
+        app:showAsAction="always"
+        />
 </menu>

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -31,6 +32,7 @@ public class LocationListActivity extends AppCompatActivity {
     double userLat,userLong;
     TextView no_location_tv;
     ImageView mark_now_button;
+    CardView locationCardView;
     Marks markers;
     Toolbar toolbar;
     ActionBar actionBar;
@@ -97,10 +99,11 @@ public class LocationListActivity extends AppCompatActivity {
     private Marks getAllMarkers() {
 
         Marks markers = new Marks();
-        Cursor c = DbHelper.GtrailsDB.rawQuery("SELECT loca_id,user_lat,user_long,user_id,user_add,loca_title,geocode_add, " +
-                "loca_desc,is_star,is_sync from marker ORDER BY modified_on DESC", null);
+        Cursor c = DbHelper.GtrailsDB.rawQuery("SELECT loca_id,ofl_loca_id,user_lat,user_long,user_id,user_add,loca_title,geocode_add, " +
+                "loca_desc,is_star,is_sync,created_on,modified_on from marker ORDER BY modified_on DESC", null);
 
         int locIdIndex      = c.getColumnIndex("loca_id");
+        int oflLocIdIndex   = c.getColumnIndex("ofl_loca_id");
         int userLatIndex    = c.getColumnIndex("user_lat");
         int userLongIndex   = c.getColumnIndex("user_long");
         int userIdIndex     = c.getColumnIndex("user_id");
@@ -110,12 +113,17 @@ public class LocationListActivity extends AppCompatActivity {
         int geocodeAddIndex = c.getColumnIndex("geocode_add");
         int isStarIndex     = c.getColumnIndex("is_star");
         int isSyncIndex     = c.getColumnIndex("is_sync");
+        int c_on            = c.getColumnIndex("created_on");
+        int m_on            = c.getColumnIndex("modified_on");
+
 
         if(c != null && c.getCount()!=0){
             c.moveToFirst();
             do{
+
                 Mark marker         =   new Mark();
                 marker.loca_id      =   c.getInt(locIdIndex);
+                marker.ofl_loca_id  =   c.getInt(oflLocIdIndex);
                 marker.user_lat     =   c.getDouble(userLatIndex);
                 marker.user_long    =   c.getDouble(userLongIndex);
                 marker.user_id      =   c.getInt(userIdIndex);
@@ -125,6 +133,9 @@ public class LocationListActivity extends AppCompatActivity {
                 marker.geo_code_add =   c.getString(geocodeAddIndex);
                 marker.is_star      =   c.getInt(isStarIndex) == 1 ? "true" : "false";
                 marker.is_sync      =   c.getInt(isSyncIndex);
+                marker.created_on   =   c.getString(c_on);
+                marker.modified_on  =   c.getString(m_on);
+
                 markers.markerList.add(marker);
             }while(c.moveToNext());
         }

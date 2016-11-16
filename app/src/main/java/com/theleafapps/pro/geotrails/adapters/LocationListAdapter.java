@@ -123,10 +123,25 @@ public class LocationListAdapter extends
             fav_image_view          = (ImageView) itemView.findViewById(R.id.fav_image_view);
             sync_image_view         = (ImageView) itemView.findViewById(R.id.sync_indicator);
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(mContext,"card clicked",Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Toast.makeText(mContext,"card clicked long",Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
+
             fav_image_view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(mContext,"Heart, sweet heart",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(mContext,"Heart, sweet heart",Toast.LENGTH_SHORT).show();
                     View parentRow      =   (View) view.getParent();
                     CardView cardView   =   (CardView) parentRow.getParent();
                     RecyclerView rv     =   (RecyclerView) cardView.getParent();
@@ -134,14 +149,16 @@ public class LocationListAdapter extends
 
                     if(TextUtils.equals(markers.markerList.get(position).is_star,"false")){
                         fav_image_view.setImageResource(R.drawable.heart_fill_28);
+                        sync_image_view.setBackgroundColor(Color.RED);
                         markers.markerList.get(position).is_star = "true";
-                        updateFav(markers.markerList.get(position).loca_id,1,0);
-                        updateCloudMark(markers.markerList.get(position),"true");
+                        updateFav(markers.markerList.get(position).ofl_loca_id,1,0);
+                        //updateCloudMark(markers.markerList.get(position),"true");
                     }else{
                         fav_image_view.setImageResource(R.drawable.heart_empty_28);
+                        sync_image_view.setBackgroundColor(Color.RED);
                         markers.markerList.get(position).is_star = "false";
-                        updateFav(markers.markerList.get(position).loca_id,0,0);
-                        updateCloudMark(markers.markerList.get(position),"false");
+                        updateFav(markers.markerList.get(position).ofl_loca_id,0,0);
+                        //updateCloudMark(markers.markerList.get(position),"false");
                     }
                     Log.d("Tangho", "onClick: this is sit");
                 }
@@ -149,14 +166,14 @@ public class LocationListAdapter extends
         }
     }
 
-    private void updateFav(int loca_id, int is_star, int is_sync) {
+    private void updateFav(int ofl_loca_id, int is_star, int is_sync) {
         try {
             dbHelper = new DbHelper(mContext);
             SQLiteDatabase db = dbHelper.getWritableDatabase();
-            SQLiteStatement stmt = db.compileStatement("UPDATE marker SET is_star = ?, is_sync = ? where loca_id = ?;");
+            SQLiteStatement stmt = db.compileStatement("UPDATE marker SET is_star = ?, is_sync = ? where ofl_loca_id = ?;");
             stmt.bindString(1, String.valueOf(is_star));
             stmt.bindString(2, String.valueOf(is_sync));
-            stmt.bindString(3, String.valueOf(loca_id));
+            stmt.bindString(3, String.valueOf(ofl_loca_id));
             stmt.execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -168,6 +185,8 @@ public class LocationListAdapter extends
             marker.is_star = is_star;
             Marks markers = new Marks();
             markers.markerList.add(marker);
+
+
 
             UpdateMarkerIsStarTask updateMarkerIsStarTask = new UpdateMarkerIsStarTask(mContext, markers);
             updateMarkerIsStarTask.execute().get();

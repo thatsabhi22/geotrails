@@ -12,6 +12,8 @@ public class Mark extends BaseRecord {
     @JsonProperty("loca_id")
     public int loca_id;
 
+    public int ofl_loca_id;
+
     @JsonProperty("user_id")
     public int user_id;
 

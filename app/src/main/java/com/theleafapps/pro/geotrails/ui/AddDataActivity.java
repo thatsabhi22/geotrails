@@ -155,7 +155,15 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                         stmt.bindString(4, location_user_address_et.getText().toString());
                         stmt.bindString(5, location_title_et.getText().toString());
                         stmt.bindString(6, location_desc_et.getText().toString());
-                        stmt.bindString(7, geo_code_add_tv.getText().toString());
+
+                        String geoCodeAdd   = geo_code_add_tv.getText().toString();
+                        if(!TextUtils.isEmpty(geoCodeAdd)){
+                            if(TextUtils.equals("<Reverse GC>",geoCodeAdd)){
+                                geoCodeAdd   =   "offline";
+                            }
+                        }
+
+                        stmt.bindString(7, geoCodeAdd);
                         stmt.bindLong(8, 0);
                         stmt.bindLong(9, 0);
                         stmt.execute();
@@ -174,10 +182,11 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                         marker.user_lat     =   userLat;
                         marker.user_long    =   userLong;
                         marker.user_id      =   1;
+
                         marker.user_add     =   location_user_address_et.getText().toString();
                         marker.loca_title   =   location_title_et.getText().toString();
                         marker.loca_desc    =   location_desc_et.getText().toString();
-                        marker.geo_code_add =   geo_code_add_tv.getText().toString();
+                        marker.geo_code_add =    geoCodeAdd;
                         marker.is_star      =   "false";
                         markers.markerList.add(marker);
 
