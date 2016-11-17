@@ -35,6 +35,7 @@ public class LocationListActivity extends AppCompatActivity {
     Toolbar toolbar;
     ActionBar actionBar;
     String caller;
+    public static String multiMarkerString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,7 @@ public class LocationListActivity extends AppCompatActivity {
         actionBar.setIcon(R.drawable.logo_small);
         actionBar.setTitle("  GeoTrails");
 
-        markers     =   getAllMarkers();
+        markers     =   Commons.getAllMarkers(Commons.get_all_markers);
         locationListRecyclerView
                     =   (RecyclerView) findViewById(R.id.location_list_recycler_view);
 
@@ -86,58 +87,12 @@ public class LocationListActivity extends AppCompatActivity {
         locationListRecyclerView.setVisibility(View.VISIBLE);
         no_location_tv.setVisibility(View.GONE);
         mark_now_button.setVisibility(View.GONE);
-        locationListAdapter  =  new LocationListAdapter(this,markers);
+        locationListAdapter  =  new LocationListAdapter(this,markers,multiMarkerString);
         locationListRecyclerView.setAdapter(locationListAdapter);
 
         final LinearLayoutManager linearLayoutManager
                 = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         locationListRecyclerView.setLayoutManager(linearLayoutManager);
-    }
-
-    private Marks getAllMarkers() {
-
-        Marks markers = new Marks();
-        Cursor c = DbHelper.GtrailsDB.rawQuery(Commons.get_all_markers, null);
-
-        int locIdIndex      = c.getColumnIndex("loca_id");
-        int oflLocIdIndex   = c.getColumnIndex("ofl_loca_id");
-        int userLatIndex    = c.getColumnIndex("user_lat");
-        int userLongIndex   = c.getColumnIndex("user_long");
-        int userIdIndex     = c.getColumnIndex("user_id");
-        int userAddIndex    = c.getColumnIndex("user_add");
-        int locTitleIndex   = c.getColumnIndex("loca_title");
-        int locaDescIndex   = c.getColumnIndex("loca_desc");
-        int geocodeAddIndex = c.getColumnIndex("geocode_add");
-        int isStarIndex     = c.getColumnIndex("is_star");
-        int isSyncIndex     = c.getColumnIndex("is_sync");
-        int c_on            = c.getColumnIndex("created_on");
-        int m_on            = c.getColumnIndex("modified_on");
-
-
-        if(c != null && c.getCount()!=0){
-            c.moveToFirst();
-            do{
-
-                Mark marker         =   new Mark();
-                marker.loca_id      =   c.getInt(locIdIndex);
-                marker.ofl_loca_id  =   c.getInt(oflLocIdIndex);
-                marker.user_lat     =   c.getDouble(userLatIndex);
-                marker.user_long    =   c.getDouble(userLongIndex);
-                marker.user_id      =   c.getInt(userIdIndex);
-                marker.user_add     =   c.getString(userAddIndex);
-                marker.loca_title   =   c.getString(locTitleIndex);
-                marker.loca_desc    =   c.getString(locaDescIndex);
-                marker.geo_code_add =   c.getString(geocodeAddIndex);
-                marker.is_star      =   c.getInt(isStarIndex) == 1 ? "true" : "false";
-                marker.is_sync      =   c.getInt(isSyncIndex);
-                marker.created_on   =   c.getString(c_on);
-                marker.modified_on  =   c.getString(m_on);
-
-                markers.markerList.add(marker);
-            }while(c.moveToNext());
-        }
-        c.close();
-        return markers;
     }
 
     @Override
@@ -169,7 +124,9 @@ public class LocationListActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.menu_map:
                     intent = new Intent(this, HomeActivity.class);
+                    intent.putExtra("multimarker",multiMarkerString);
                     intent.putExtra("caller", "LocationListActivity");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     return true;
                 case android.R.id.home:
@@ -178,7 +135,6 @@ public class LocationListActivity extends AppCompatActivity {
                     if (!TextUtils.isEmpty(caller)) {
                         Class callerClass = Class.forName(getPackageName() + ".ui." + caller);
                         intent = new Intent(this, callerClass);
-
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         if(TextUtils.equals(caller,"AddDataActivity")){
                             intent.putExtra("userLat",userLat);

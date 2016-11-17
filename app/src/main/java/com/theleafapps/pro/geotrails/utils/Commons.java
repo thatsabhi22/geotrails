@@ -1,12 +1,15 @@
 package com.theleafapps.pro.geotrails.utils;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.StrictMode;
 import android.util.Log;
 
 import com.facebook.AccessToken;
+import com.theleafapps.pro.geotrails.models.Mark;
+import com.theleafapps.pro.geotrails.models.multiples.Marks;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -33,6 +36,8 @@ public class Commons {
 
     public static String get_all_markers  = "SELECT loca_id,ofl_loca_id,user_lat,user_long,user_id,user_add,loca_title,geocode_add, " +
             "loca_desc,is_star,is_sync,created_on,modified_on from marker ORDER BY modified_on DESC";
+
+    public static String get_all_markers_with_ids = "SELECT * FROM marker where ofl_loca_id in (?)";
 
     public static String update_marker_star_sync_ofl = "UPDATE marker SET is_star = ?, is_sync = ? where ofl_loca_id = ?;";
 
@@ -84,5 +89,51 @@ public class Commons {
             Log.d("Tangho", "No network available!");
         }
         return false;
+    }
+
+    public static Marks getAllMarkers(String query) {
+
+        Marks markers = new Marks();
+        Cursor c = DbHelper.GtrailsDB.rawQuery(query, null);
+
+        int locIdIndex      = c.getColumnIndex("loca_id");
+        int oflLocIdIndex   = c.getColumnIndex("ofl_loca_id");
+        int userLatIndex    = c.getColumnIndex("user_lat");
+        int userLongIndex   = c.getColumnIndex("user_long");
+        int userIdIndex     = c.getColumnIndex("user_id");
+        int userAddIndex    = c.getColumnIndex("user_add");
+        int locTitleIndex   = c.getColumnIndex("loca_title");
+        int locaDescIndex   = c.getColumnIndex("loca_desc");
+        int geocodeAddIndex = c.getColumnIndex("geocode_add");
+        int isStarIndex     = c.getColumnIndex("is_star");
+        int isSyncIndex     = c.getColumnIndex("is_sync");
+        int c_on            = c.getColumnIndex("created_on");
+        int m_on            = c.getColumnIndex("modified_on");
+
+
+        if(c != null && c.getCount()!=0){
+            c.moveToFirst();
+            do{
+
+                Mark marker         =   new Mark();
+                marker.loca_id      =   c.getInt(locIdIndex);
+                marker.ofl_loca_id  =   c.getInt(oflLocIdIndex);
+                marker.user_lat     =   c.getDouble(userLatIndex);
+                marker.user_long    =   c.getDouble(userLongIndex);
+                marker.user_id      =   c.getInt(userIdIndex);
+                marker.user_add     =   c.getString(userAddIndex);
+                marker.loca_title   =   c.getString(locTitleIndex);
+                marker.loca_desc    =   c.getString(locaDescIndex);
+                marker.geo_code_add =   c.getString(geocodeAddIndex);
+                marker.is_star      =   c.getInt(isStarIndex) == 1 ? "true" : "false";
+                marker.is_sync      =   c.getInt(isSyncIndex);
+                marker.created_on   =   c.getString(c_on);
+                marker.modified_on  =   c.getString(m_on);
+
+                markers.markerList.add(marker);
+            }while(c.moveToNext());
+        }
+        c.close();
+        return markers;
     }
 }

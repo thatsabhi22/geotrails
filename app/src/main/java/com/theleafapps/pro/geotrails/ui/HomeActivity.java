@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -23,16 +25,23 @@ import android.widget.Toast;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.theleafapps.pro.geotrails.R;
+import com.theleafapps.pro.geotrails.models.Mark;
+import com.theleafapps.pro.geotrails.models.multiples.Marks;
 import com.theleafapps.pro.geotrails.utils.Commons;
+import com.theleafapps.pro.geotrails.utils.DbHelper;
+
+import java.util.List;
 
 public class HomeActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
@@ -45,11 +54,15 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
     String provider;
     ImageView mark_location_button;
     ImageView list_button;
+    String multiMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        Intent intent        = getIntent();
+        multiMarker          = intent.getStringExtra("multimarker");
 
         mark_location_button = (ImageView) findViewById(R.id.mark_location_button);
         list_button          = (ImageView) findViewById(R.id.list_button);
@@ -68,9 +81,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         if (Commons.accessT != null) {
-
             Toast.makeText(this, "Home Activity >>" + Commons.accessT.getApplicationId(), Toast.LENGTH_LONG).show();
-
         }
 
         checkIfLocationEnabled(this);
@@ -142,31 +153,50 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         }else{
             sydney = new LatLng(location.getLatitude(), location.getLongitude());
         }
-        Marker mkr = mMap.addMarker(
-                        new MarkerOptions()
-                                .position(sydney)
-                                .title("You are here")
-                                .snippet("Mark Your Location")
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_used)));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12f));
-        mMap.getUiSettings().setZoomGesturesEnabled(true);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
+
+        if(TextUtils.isEmpty(multiMarker)) {
+            Marker mkr = mMap.addMarker(
+                    new MarkerOptions()
+                            .position(sydney)
+                            .title("You are here")
+                            .snippet("Mark Your Location")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_used)));
+            mkr.showInfoWindow();
+
+            //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12f));
+            mMap.getUiSettings().setZoomGesturesEnabled(true);
+            mMap.getUiSettings().setZoomControlsEnabled(true);
+        }
+        else{
+            Marks markers = getAllMarkersWithIds(multiMarker);
+            insertMarkers(markers.markerList,sydney);
+        }
     }
+
+
 
     @Override
     public void onLocationChanged(Location locationUpdate) {
         LatLng sydney = new LatLng(locationUpdate.getLatitude(), locationUpdate.getLongitude());
-        location = locationUpdate;
-        mMap.clear();
-        mMap.addMarker(
-                new MarkerOptions()
-                        .position(sydney)
-                        .title("You are Here")
-                        .snippet("Mark Your Location")
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_used)));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,13f));
-        Log.d(TAG, "onLocationChanged: lat : "+ locationUpdate.getLatitude()+" long : " + locationUpdate.getLongitude());
+        if(TextUtils.isEmpty(multiMarker)) {
+            location = locationUpdate;
+            mMap.clear();
+            Marker mkr =
+                    mMap.addMarker(
+                    new MarkerOptions()
+                            .position(sydney)
+                            .title("You are Here")
+                            .snippet("Mark Your Location")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_used)));
+            mkr.showInfoWindow();
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13f));
+            Log.d(TAG, "onLocationChanged: lat : " + locationUpdate.getLatitude() + " long : " + locationUpdate.getLongitude());
+        }
+        else{
+            Marks markers = getAllMarkersWithIds(multiMarker);
+            insertMarkers(markers.markerList,sydney);
+        }
     }
 
     @Override
@@ -230,7 +260,48 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
             }
     }
 
+    Marks getAllMarkersWithIds(String multiMarkerString){
+        String query = "";
+        if(multiMarkerString.matches("^\\d+(,\\d+)*$")) {
+            query = Commons.get_all_markers_with_ids.replace("?",multiMarkerString);
+        }
+        return Commons.getAllMarkers(query);
+    }
 
+    private void insertMarkers(List<Mark> markers, LatLng currentLoc) {
+        final LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+        for (int i = 0; i < markers.size(); i++) {
+            final LatLng position = new LatLng(markers.get(i).user_lat, markers.get(i).user_long);
+            final MarkerOptions options =
+                    new MarkerOptions()
+                            .position(position)
+                            .title("You are Here")
+                            .snippet("Mark Your Location")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_used));
+
+            mMap.addMarker(options);
+            mMap.getUiSettings().setZoomGesturesEnabled(true);
+            mMap.getUiSettings().setZoomControlsEnabled(true);
+            builder.include(position);
+        }
+
+        final LatLng position1 = new LatLng(currentLoc.latitude, currentLoc.longitude);
+        Marker current = mMap.addMarker(
+                new MarkerOptions()
+                        .position(currentLoc)
+                        .title("You are Here")
+                        .snippet("Mark Your Location")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_used)));
+        current.showInfoWindow();
+        mMap.getUiSettings().setZoomGesturesEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        builder.include(position1);
+
+        LatLngBounds coordsBounds = builder.build();
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(coordsBounds, 100);
+        mMap.animateCamera(cameraUpdate);
+    }
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
