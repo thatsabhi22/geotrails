@@ -1,11 +1,9 @@
 package com.theleafapps.pro.geotrails.ui;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -19,10 +17,8 @@ import android.widget.TextView;
 
 import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.adapters.LocationListAdapter;
-import com.theleafapps.pro.geotrails.models.Mark;
 import com.theleafapps.pro.geotrails.models.multiples.Marks;
 import com.theleafapps.pro.geotrails.utils.Commons;
-import com.theleafapps.pro.geotrails.utils.DbHelper;
 
 public class LocationListActivity extends AppCompatActivity {
 
@@ -68,6 +64,7 @@ public class LocationListActivity extends AppCompatActivity {
         }
     }
 
+
     private void setEmptyLocationList() {
         locationListRecyclerView.setVisibility(View.GONE);
         no_location_tv.setVisibility(View.VISIBLE);
@@ -87,7 +84,7 @@ public class LocationListActivity extends AppCompatActivity {
         locationListRecyclerView.setVisibility(View.VISIBLE);
         no_location_tv.setVisibility(View.GONE);
         mark_now_button.setVisibility(View.GONE);
-        locationListAdapter  =  new LocationListAdapter(this,markers,multiMarkerString);
+        locationListAdapter  =  new LocationListAdapter(this,markers,multiMarkerString,getFragmentManager());
         locationListRecyclerView.setAdapter(locationListAdapter);
 
         final LinearLayoutManager linearLayoutManager

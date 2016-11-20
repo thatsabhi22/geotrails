@@ -1,10 +1,13 @@
 package com.theleafapps.pro.geotrails.adapters;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Color;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -18,6 +21,7 @@ import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.theleafapps.pro.geotrails.R;
+import com.theleafapps.pro.geotrails.dialogs.MarkerActionDialog;
 import com.theleafapps.pro.geotrails.models.Mark;
 import com.theleafapps.pro.geotrails.models.multiples.Marks;
 import com.theleafapps.pro.geotrails.tasks.UpdateMarkerIsStarTask;
@@ -27,10 +31,7 @@ import com.theleafapps.pro.geotrails.utils.Commons;
 import com.theleafapps.pro.geotrails.utils.DbHelper;
 import com.theleafapps.pro.geotrails.utils.MySingleton;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -50,13 +51,15 @@ public class LocationListAdapter extends
     ImageLoader mImageLoader;
     String multiMarker;
     Set<String> multiMarkerList;
+    FragmentManager fragmentManager;
 
-    public LocationListAdapter(Context context, Marks markers,String multiMarker){
+    public LocationListAdapter(Context context, Marks markers, String multiMarker, FragmentManager fragmentManager){
         inflater                =   LayoutInflater.from(context);
         this.mContext           =   context;
         this.markers            =   markers;
         this.multiMarker        =   multiMarker;
         multiMarkerList         =   new LinkedHashSet<>();
+        this.fragmentManager    =   fragmentManager;
     }
 
     @Override
@@ -107,6 +110,7 @@ public class LocationListAdapter extends
             holder.sync_image_view.setBackgroundColor(Color.RED);
         }
 
+
     }
 
     @Override
@@ -141,8 +145,23 @@ public class LocationListAdapter extends
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    int position        =   getCardViewPositionWithParentRecycler(view);
-                    String ofl_loca_id  =   String.valueOf(markers.markerList.get(position).ofl_loca_id);
+
+                    String ofl_loca_id     =   getOflLocaIdByCardPosition(view);
+                    Bundle bundle          =   new Bundle();
+                    bundle.putString("ofl_loca_id",ofl_loca_id);
+                    MarkerActionDialog ldc = new MarkerActionDialog();
+                    ldc.setArguments(bundle);
+                    ldc.show(fragmentManager, "securityQuestionDialog");
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Toast.makeText(mContext,"card clicked long",Toast.LENGTH_SHORT).show();
+
+                    //###################################################
+                    String ofl_loca_id = getOflLocaIdByCardPosition(view);
 
                     Intent intent = new Intent(mContext, HomeActivity.class);
 
@@ -151,13 +170,7 @@ public class LocationListAdapter extends
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     mContext.startActivity(intent);
                     Toast.makeText(mContext,"card clicked",Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    Toast.makeText(mContext,"card clicked long",Toast.LENGTH_SHORT).show();
+                    //###################################################
                     return false;
                 }
             });
@@ -203,6 +216,12 @@ public class LocationListAdapter extends
                 }
             });
         }
+    }
+
+    @NonNull
+    private String getOflLocaIdByCardPosition(View view) {
+        int position        =   getCardViewPositionWithParentRecycler(view);
+        return String.valueOf(markers.markerList.get(position).ofl_loca_id);
     }
 
     private int getCardViewPosition(View view) {

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -18,13 +17,9 @@ import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -39,7 +34,6 @@ import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.models.Mark;
 import com.theleafapps.pro.geotrails.models.multiples.Marks;
 import com.theleafapps.pro.geotrails.utils.Commons;
-import com.theleafapps.pro.geotrails.utils.DbHelper;
 
 import java.util.List;
 
@@ -169,7 +163,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.getUiSettings().setZoomControlsEnabled(true);
         }
         else{
-            Marks markers = getAllMarkersWithIds(multiMarker);
+            Marks markers = Commons.getAllMarkersWithIds(multiMarker);
             insertMarkers(markers.markerList,sydney);
         }
     }
@@ -194,7 +188,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d(TAG, "onLocationChanged: lat : " + locationUpdate.getLatitude() + " long : " + locationUpdate.getLongitude());
         }
         else{
-            Marks markers = getAllMarkersWithIds(multiMarker);
+            Marks markers = Commons.getAllMarkersWithIds(multiMarker);
             insertMarkers(markers.markerList,sydney);
         }
     }
@@ -260,13 +254,6 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
             }
     }
 
-    Marks getAllMarkersWithIds(String multiMarkerString){
-        String query = "";
-        if(multiMarkerString.matches("^\\d+(,\\d+)*$")) {
-            query = Commons.get_all_markers_with_ids.replace("?",multiMarkerString);
-        }
-        return Commons.getAllMarkers(query);
-    }
 
     private void insertMarkers(List<Mark> markers, LatLng currentLoc) {
         final LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -278,7 +265,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
                             .position(position)
                             .title("You are Here")
                             .snippet("Mark Your Location")
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_used));
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_mini));
 
             mMap.addMarker(options);
             mMap.getUiSettings().setZoomGesturesEnabled(true);

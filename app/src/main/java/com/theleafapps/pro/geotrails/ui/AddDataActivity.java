@@ -7,9 +7,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,7 +22,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -54,16 +58,18 @@ import java.util.concurrent.ExecutionException;
 
 public class AddDataActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    Intent intent;
     DbHelper dbHelper;
     GoogleMap mMap;
     Toolbar toolbar;
     boolean result;
     double userLat,userLong;
-    TextView geo_code_add_tv;
+    TextView geo_code_add_tv,loca_id_hid_tv;
     EditText location_title_et,location_user_address_et,location_desc_et;
     ImageButton mark_button;
 //    ImageView add_location_image_button;
     String TAG = "Tangho";
+    String ofl_loca_id;
     Address geoAddress;
     ActionBar actionBar;
     String imageFolderName;
@@ -71,6 +77,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     LayoutInflater inflater;
     RelativeLayout thumbnailContainer;
     ImageView thumbnail;
+    Mark updateMarker;
     private static final int PICK_IMAGE_ID = 234;
 
     @Override
@@ -88,17 +95,41 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
 
         Intent recIntent            =   getIntent();
         imageList                   =   new ArrayList<String>();
+        ofl_loca_id                 =   recIntent.getStringExtra("ofl_loca_id");
         userLat                     =   recIntent.getDoubleExtra("userLat",0);
         userLong                    =   recIntent.getDoubleExtra("userLong",0);
         inflater                    =   (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 //        thumbnailContainer          =   (RelativeLayout) findViewById(R.id.thumbnailContainer);
+        loca_id_hid_tv              =   (TextView) findViewById(R.id.loca_id_hid_tv);
         geo_code_add_tv             =   (TextView) findViewById(R.id.reverse_geo_add_tv);
         location_title_et           =   (EditText) findViewById(R.id.location_title_et);
         location_user_address_et    =   (EditText) findViewById(R.id.location_user_address_et);
         location_desc_et            =   (EditText) findViewById(R.id.location_desc_et);
         mark_button                 =   (ImageButton) findViewById(R.id.mark_button);
 //        add_location_image_button   =   (ImageView) findViewById(R.id.add_location_image_button);
+
+
+        if(!TextUtils.isEmpty(ofl_loca_id)){
+
+            Marks markers   =   Commons.getAllMarkersWithIds(ofl_loca_id);
+            updateMarker     =   markers.markerList.get(0);
+
+            actionBar.setTitle("  Edit Info");
+
+            if(updateMarker!=null){
+                userLat     =   updateMarker.user_lat;
+                userLong    =   updateMarker.user_long;
+
+                if(!TextUtils.equals(updateMarker.geo_code_add,"offline"))
+                    geo_code_add_tv.setText(updateMarker.geo_code_add);
+
+                loca_id_hid_tv.setText(String.valueOf(updateMarker.ofl_loca_id));
+                location_title_et.setText(updateMarker.loca_title);
+                location_user_address_et.setText(updateMarker.user_add);
+                location_desc_et.setText(updateMarker.loca_desc);
+            }
+        }
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.addDataSmallMap);
@@ -146,80 +177,116 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                     location_title_et.setError("Atleast Put a title to this location");
                 }else{
                     try{
-                        dbHelper                =   new DbHelper(AddDataActivity.this);
-                        SQLiteDatabase db       =   dbHelper.getWritableDatabase();
-                        SQLiteStatement stmt    =   db.compileStatement(Commons.insert_marker_st);
-                        stmt.bindDouble(1, userLat);
-                        stmt.bindDouble(2, userLong);
-                        stmt.bindLong(3, 1);
-                        stmt.bindString(4, location_user_address_et.getText().toString());
-                        stmt.bindString(5, location_title_et.getText().toString());
-                        stmt.bindString(6, location_desc_et.getText().toString());
 
-                        String geoCodeAdd   = geo_code_add_tv.getText().toString();
-                        if(!TextUtils.isEmpty(geoCodeAdd)){
-                            if(TextUtils.equals("<Reverse GC>",geoCodeAdd)){
-                                geoCodeAdd   =   "offline";
-                            }
+                        if(TextUtils.equals(loca_id_hid_tv.getText(),"empty")) {
+                            AddNewMarker();
+                        }else{
+                            EditMarker();
                         }
-
-                        stmt.bindString(7, geoCodeAdd);
-                        stmt.bindLong(8, 0);
-                        stmt.bindLong(9, 0);
-                        stmt.execute();
-
-                        int ofl_loca_id     =   0;
-                        String query        =   Commons.select_last_inserted_loca_id;
-                        Cursor c            =   db.rawQuery(query,null);
-                        if (c != null && c.moveToFirst()) {
-                            ofl_loca_id     =   (int)c.getLong(0);
-                        }
-                        Log.d(TAG, "Records added");
-
-                        Marks markers       =   new Marks();
-
-                        Mark marker         =   new Mark();
-                        marker.user_lat     =   userLat;
-                        marker.user_long    =   userLong;
-                        marker.user_id      =   1;
-
-                        marker.user_add     =   location_user_address_et.getText().toString();
-                        marker.loca_title   =   location_title_et.getText().toString();
-                        marker.loca_desc    =   location_desc_et.getText().toString();
-                        marker.geo_code_add =    geoCodeAdd;
-                        marker.is_star      =   "false";
-                        markers.markerList.add(marker);
-
-                        AddMarkerTask addMarkerTask = new AddMarkerTask(AddDataActivity.this,markers);
-                        result = addMarkerTask.execute().get();
-
-                        if(result) {
-
-                            SQLiteStatement stmt1 = db.compileStatement(Commons.update_marker_sync);
-                            stmt1.bindLong(1,ofl_loca_id);
-                            stmt1.execute();
-
-                            SQLiteStatement stmt2 = db.compileStatement(Commons.update_marker_loca_id);
-                            stmt2.bindLong(1,addMarkerTask.locaId);
-                            stmt2.bindLong(2,ofl_loca_id);
-                            stmt2.execute();
-
-                        }
-
-                        Intent intent = new Intent(AddDataActivity.this,LocationListActivity.class);
-                        intent.putExtra("caller", "HomeActivity");
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
 
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
-
                 }
             }
         });
+    }
+
+    @NonNull
+    private String executeDBQuery(SQLiteDatabase db, String query) {
+
+        String geoCodeAdd = null;
+
+            SQLiteStatement stmt    =   db.compileStatement(query);
+            stmt.bindDouble(1, userLat);
+            stmt.bindDouble(2, userLong);
+            stmt.bindLong(3, 1);
+            stmt.bindString(4, location_user_address_et.getText().toString());
+            stmt.bindString(5, location_title_et.getText().toString());
+            stmt.bindString(6, location_desc_et.getText().toString());
+
+            geoCodeAdd              =   geo_code_add_tv.getText().toString();
+            if (!TextUtils.isEmpty(geoCodeAdd)) {
+                if (TextUtils.equals("<Reverse GC>", geoCodeAdd)) {
+                    geoCodeAdd      =   "offline";
+                }
+            }
+            stmt.bindString(7, geoCodeAdd);
+
+            int star_value = 0;
+            if(updateMarker!=null){
+                if(TextUtils.equals(updateMarker.is_star,"true")){
+                    star_value = 1;
+                }
+                stmt.bindLong(10,Integer.valueOf(loca_id_hid_tv.getText().toString()));
+            }
+            stmt.bindLong(8, star_value);
+            stmt.bindLong(9, 0);
+
+            stmt.execute();
+            Toast.makeText(this,"The location is updated successfully",Toast.LENGTH_SHORT).show();
+
+        return geoCodeAdd;
+    }
+
+    private void EditMarker(){
+        dbHelper            =   new DbHelper(AddDataActivity.this);
+        SQLiteDatabase db   =   dbHelper.getWritableDatabase();
+        executeDBQuery(db,Commons.update_marker_st);
+
+        intent = new Intent(this,LocationListActivity.class);
+        startActivity(intent);
+    }
+
+    private void AddNewMarker() throws InterruptedException, ExecutionException {
+        dbHelper            =   new DbHelper(AddDataActivity.this);
+        SQLiteDatabase db   =   dbHelper.getWritableDatabase();
+        String geoCodeAdd   =   executeDBQuery(db, Commons.insert_marker_st);
+
+        int ofl_loca_id     =   0;
+        String query        =   Commons.select_last_inserted_loca_id;
+        Cursor c            =   db.rawQuery(query, null);
+        if (c != null && c.moveToFirst()) {
+            ofl_loca_id     =   (int) c.getLong(0);
+        }
+        Log.d(TAG, "Records added");
+
+        Marks markers       =   new Marks();
+        Mark marker         =   new Mark();
+        marker.user_lat     =   userLat;
+        marker.user_long    =   userLong;
+        marker.user_id      =   1;
+
+        marker.user_add     = location_user_address_et.getText().toString();
+        marker.loca_title   = location_title_et.getText().toString();
+        marker.loca_desc    = location_desc_et.getText().toString();
+        marker.geo_code_add = geoCodeAdd;
+        marker.is_star      = "false";
+        markers.markerList.add(marker);
+
+        AddMarkerTask addMarkerTask
+                            = new AddMarkerTask(AddDataActivity.this, markers);
+        result              = addMarkerTask.execute().get();
+
+        if (result) {
+
+            SQLiteStatement stmt1 = db.compileStatement(Commons.update_marker_sync);
+            stmt1.bindLong(1, ofl_loca_id);
+            stmt1.execute();
+
+            SQLiteStatement stmt2 = db.compileStatement(Commons.update_marker_loca_id);
+            stmt2.bindLong(1, addMarkerTask.locaId);
+            stmt2.bindLong(2, ofl_loca_id);
+            stmt2.execute();
+
+        }
+
+        intent = new Intent(AddDataActivity.this, LocationListActivity.class);
+        intent.putExtra("caller", "HomeActivity");
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
@@ -304,7 +371,8 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                         .position(sydney)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_mini)));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15f));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 11f));
+        mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
     }
 
@@ -319,7 +387,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_location_list:
-                Intent intent;
+
                 intent = new Intent(this,LocationListActivity.class);
                 intent.putExtra("caller","AddDataActivity");
                 intent.putExtra("userLat",userLat);
@@ -343,5 +411,45 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    protected Rect getLocationOnScreen(EditText mEditText) {
+        Rect mRect = new Rect();
+        int[] location = new int[2];
+
+        mEditText.getLocationOnScreen(location);
+
+        mRect.left = location[0];
+        mRect.top = location[1];
+        mRect.right = location[0] + mEditText.getWidth();
+        mRect.bottom = location[1] + mEditText.getHeight();
+
+        return mRect;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+
+        boolean handleReturn = super.dispatchTouchEvent(ev);
+
+        View view = getCurrentFocus();
+
+        int x = (int) ev.getX();
+        int y = (int) ev.getY();
+
+        if(view instanceof EditText){
+            EditText innerView = (EditText) getCurrentFocus();
+
+            if (ev.getAction() == MotionEvent.ACTION_UP &&
+                    !getLocationOnScreen(innerView).contains(x, y)) {
+
+                InputMethodManager input = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                input.hideSoftInputFromWindow(getWindow().getCurrentFocus()
+                        .getWindowToken(), 0);
+            }
+        }
+
+        return handleReturn;
     }
 }

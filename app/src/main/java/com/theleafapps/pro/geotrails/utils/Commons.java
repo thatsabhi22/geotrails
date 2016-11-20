@@ -32,10 +32,23 @@ public class Commons {
             "email = ?,current_location = ? WHERE user_id = ?";
 
     public static String insert_marker_st = "INSERT INTO marker (user_lat,user_long,user_id,user_add,loca_title," +
-            "loca_desc,geocode_add,is_star,is_sync,ofl_loca_id) values (?,?,?,?,?,?,?,?,?,(SELECT IFNULL(MAX(ofl_loca_id), 10000) + 1 FROM marker))";
+            "loca_desc,geocode_add,is_star,is_sync,ofl_loca_id,is_deleted) values (?,?,?,?,?,?,?,?,?,(SELECT IFNULL(MAX(ofl_loca_id), 10000) + 1 FROM marker),0)";
+
+    public static String update_marker_st = "UPDATE marker set " +
+            "user_lat = ? ," +
+            "user_long = ? ," +
+            "user_id = ? ," +
+            "user_add = ? ," +
+            "loca_title = ? ," +
+            "loca_desc = ? ," +
+            "geocode_add = ? ," +
+            "is_star = ? ," +
+            "is_sync = ?  ," +
+            "modified_on = CURRENT_TIMESTAMP " +
+            "where ofl_loca_id = ? ";
 
     public static String get_all_markers  = "SELECT loca_id,ofl_loca_id,user_lat,user_long,user_id,user_add,loca_title,geocode_add, " +
-            "loca_desc,is_star,is_sync,created_on,modified_on from marker ORDER BY modified_on DESC";
+            "loca_desc,is_star,is_sync,created_on,modified_on from marker where is_deleted = 0 ORDER BY modified_on DESC";
 
     public static String get_all_markers_with_ids = "SELECT * FROM marker where ofl_loca_id in (?)";
 
@@ -135,5 +148,13 @@ public class Commons {
         }
         c.close();
         return markers;
+    }
+
+    public static Marks getAllMarkersWithIds(String multiMarkerString){
+        String query = "";
+        if(multiMarkerString.matches("^\\d+(,\\d+)*$")) {
+            query = Commons.get_all_markers_with_ids.replace("?",multiMarkerString);
+        }
+        return Commons.getAllMarkers(query);
     }
 }
