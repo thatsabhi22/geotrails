@@ -2,6 +2,8 @@ package com.theleafapps.pro.geotrails.utils;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.StrictMode;
@@ -14,6 +16,7 @@ import com.theleafapps.pro.geotrails.models.multiples.Marks;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Created by aviator on 02/09/16.
@@ -25,8 +28,15 @@ public class Commons {
     public static String insert_usr_st = "INSERT INTO gt_user "+
                 "(user_dev_id,fb_id,first_name,last_name,gender,email,current_location) values (?,?,?,?,?,?,?);";
 
-    public static String get_usr_by_fb_id_st = "SELECT user_id from gt_user where fb_id = ?";
+    public static String get_usr_by_fb_id_st = "SELECT user_id FROM gt_user where fb_id = ?";
 
+    public static String get_all_new_unsynced_marker = "SELECT * FROM marker where is_sync = 0 AND loca_id IS NULL";
+
+    public static String get_all_old_unsynced_marker = "SELECT * FROM marker where is_sync = 0 AND loca_id IS NOT NULL";
+
+    public static String update_all_new_unsync_markers = "UPDATE marker SET is_sync = 1, loca_id = ? where ofl_loca_id = ?";
+
+    public static String update_all_old_unsync_markers = "UPDATE marker SET is_sync = 1 where ofl_loca_id = ?";
 
     public static String update_usr_st =  "UPDATE gt_user SET user_dev_id = ?,fb_id = ?,first_name = ?,last_name = ?,gender = ?," +
             "email = ?,current_location = ? WHERE user_id = ?";
@@ -109,6 +119,28 @@ public class Commons {
         Marks markers = new Marks();
         Cursor c = DbHelper.GtrailsDB.rawQuery(query, null);
 
+        populateMarkers(markers, c);
+        c.close();
+        return markers;
+    }
+
+    public static void executeLocalQuery(Context context,String query,List<Object> params){
+
+        int i=1;
+        DbHelper dbHelper       =   new DbHelper(context);
+        SQLiteDatabase db       =   dbHelper.getWritableDatabase();
+        SQLiteStatement stmt    =   db.compileStatement(query);
+
+        for(Object param:params){
+            stmt.bindString(i, String.valueOf(param));
+            i++;
+        }
+
+        stmt.execute();
+        params.clear();
+    }
+
+    private static void populateMarkers(Marks markers, Cursor c) {
         int locIdIndex      = c.getColumnIndex("loca_id");
         int oflLocIdIndex   = c.getColumnIndex("ofl_loca_id");
         int userLatIndex    = c.getColumnIndex("user_lat");
@@ -146,8 +178,6 @@ public class Commons {
                 markers.markerList.add(marker);
             }while(c.moveToNext());
         }
-        c.close();
-        return markers;
     }
 
     public static Marks getAllMarkersWithIds(String multiMarkerString){

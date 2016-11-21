@@ -18,7 +18,7 @@ public class AddMarkerTask extends BaseAsyncRequest  {
 
     Context context;
     public int locaId;
-    Marks markersObj;
+    public Marks markersObj;
 
     public AddMarkerTask(Context context, Marks markers){
         this.context      =   context;
@@ -43,7 +43,7 @@ public class AddMarkerTask extends BaseAsyncRequest  {
     @Override
     protected void processResponse(String response) throws ApiException, org.json.JSONException {
         // response has whole contact record, but we just want the id
-        Marks markersObj    =   (Marks) ApiInvoker.deserialize(response, "", Marks.class);
+        markersObj    =   (Marks) ApiInvoker.deserialize(response, "", Marks.class);
         locaId              =   markersObj.markerList.get(0).loca_id;
     }
 

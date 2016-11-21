@@ -19,7 +19,7 @@ public class UpdateMarkerIsStarTask extends BaseAsyncRequest {
 
     Context context;
     public int locaId;
-    Marks markers;
+    public Marks markers;
 
     public UpdateMarkerIsStarTask(Context context, Marks markers){
         this.context      =   context;
@@ -43,7 +43,7 @@ public class UpdateMarkerIsStarTask extends BaseAsyncRequest {
 
     @Override
     protected void processResponse(String response) throws ApiException, org.json.JSONException {
-        Marks markers   =   (Marks) ApiInvoker.deserialize(response, "", Marks.class);
+        markers   =   (Marks) ApiInvoker.deserialize(response, "", Marks.class);
         locaId          =   markers.markerList.get(0).loca_id;
     }
 

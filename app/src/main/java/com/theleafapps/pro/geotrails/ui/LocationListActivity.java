@@ -14,11 +14,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.adapters.LocationListAdapter;
+import com.theleafapps.pro.geotrails.models.Mark;
 import com.theleafapps.pro.geotrails.models.multiples.Marks;
+import com.theleafapps.pro.geotrails.tasks.AddMarkerTask;
+import com.theleafapps.pro.geotrails.tasks.UpdateMarkerIsStarTask;
 import com.theleafapps.pro.geotrails.utils.Commons;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class LocationListActivity extends AppCompatActivity {
 
@@ -114,6 +122,80 @@ public class LocationListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
+
+    public Marks syncAllNewUnsyncedMarkers(){
+
+        List<Integer> ofl_loca_id_list = new ArrayList<>();
+        Marks markers = null;
+        try {
+            markers = Commons.getAllMarkers(Commons.get_all_new_unsynced_marker);
+            for(Mark marker: markers.markerList){
+                ofl_loca_id_list.add(marker.ofl_loca_id);
+            }
+            if (markers != null && markers.markerList.size() > 0) {
+                AddMarkerTask addMarkerTask = new AddMarkerTask(this, markers);
+                addMarkerTask.execute().get();
+
+                int i=0;
+                Marks responseMarkers = addMarkerTask.markersObj;
+
+                List<Object> param = new ArrayList<>();
+
+                for(Mark mark:responseMarkers.markerList){
+                    param.add(String.valueOf(mark.loca_id));
+                    param.add(String.valueOf(ofl_loca_id_list.get(i)));
+                    Commons.executeLocalQuery(this,Commons.update_all_new_unsync_markers,param);
+                    i++;
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return markers;
+    }
+
+    public Marks syncAllOldUnsyncedMarkers(){
+
+        List<Integer> ofl_loca_id_list = new ArrayList<>();
+        Marks markers = null;
+
+        try {
+            markers = Commons.getAllMarkers(Commons.get_all_old_unsynced_marker);
+            for(Mark marker: markers.markerList){
+                ofl_loca_id_list.add(marker.ofl_loca_id);
+            }
+            if (markers != null && markers.markerList.size() > 0) {
+                UpdateMarkerIsStarTask updateMarkerIsStarTask = new UpdateMarkerIsStarTask(this, markers);
+                updateMarkerIsStarTask.execute().get();
+
+                int i=0;
+                Marks responseMarkers = updateMarkerIsStarTask.markers;
+
+                List<Object> param = new ArrayList<>();
+
+                for(Mark mark:responseMarkers.markerList){
+                    param.add(String.valueOf(ofl_loca_id_list.get(i)));
+                    Commons.executeLocalQuery(this,Commons.update_all_old_unsync_markers,param);
+                    i++;
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return markers;
+    }
+
+    public void syncRecords(){
+
+
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
@@ -126,6 +208,23 @@ public class LocationListActivity extends AppCompatActivity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     return true;
+
+                case R.id.sync:
+                    Toast.makeText(this,"sync created",Toast.LENGTH_LONG).show();
+                    if(Commons.hasActiveInternetConnection(this)){
+
+                        syncAllNewUnsyncedMarkers();
+                        syncAllOldUnsyncedMarkers();
+
+                        intent = new Intent(this,LoadingActivity.class);
+                        intent.putExtra("goto","LocationListActivity");
+                        startActivity(intent);
+
+                    }else{
+                        Toast.makeText(this,"Please check your internet Connectivity",Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+
                 case android.R.id.home:
                     String caller = getIntent().getStringExtra("caller");
 

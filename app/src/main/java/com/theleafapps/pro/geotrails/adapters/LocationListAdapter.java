@@ -146,20 +146,6 @@ public class LocationListAdapter extends
                 @Override
                 public void onClick(View view) {
 
-                    String ofl_loca_id     =   getOflLocaIdByCardPosition(view);
-                    Bundle bundle          =   new Bundle();
-                    bundle.putString("ofl_loca_id",ofl_loca_id);
-                    MarkerActionDialog ldc = new MarkerActionDialog();
-                    ldc.setArguments(bundle);
-                    ldc.show(fragmentManager, "securityQuestionDialog");
-                }
-            });
-
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    Toast.makeText(mContext,"card clicked long",Toast.LENGTH_SHORT).show();
-
                     //###################################################
                     String ofl_loca_id = getOflLocaIdByCardPosition(view);
 
@@ -171,6 +157,20 @@ public class LocationListAdapter extends
                     mContext.startActivity(intent);
                     Toast.makeText(mContext,"card clicked",Toast.LENGTH_SHORT).show();
                     //###################################################
+
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Toast.makeText(mContext,"card clicked long",Toast.LENGTH_SHORT).show();
+                    String ofl_loca_id     =   getOflLocaIdByCardPosition(view);
+                    Bundle bundle          =   new Bundle();
+                    bundle.putString("ofl_loca_id",ofl_loca_id);
+                    MarkerActionDialog ldc = new MarkerActionDialog();
+                    ldc.setArguments(bundle);
+                    ldc.show(fragmentManager, "securityQuestionDialog");
                     return false;
                 }
             });

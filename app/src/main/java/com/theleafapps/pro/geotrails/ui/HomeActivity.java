@@ -260,11 +260,15 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
 
         for (int i = 0; i < markers.size(); i++) {
             final LatLng position = new LatLng(markers.get(i).user_lat, markers.get(i).user_long);
+            String str = markers.get(i).loca_desc;
+            int maxLength = (str.length() < 15)?str.length():15;
+            str = str.substring(0, maxLength);
+
             final MarkerOptions options =
                     new MarkerOptions()
                             .position(position)
-                            .title("You are Here")
-                            .snippet("Mark Your Location")
+                            .title(markers.get(i).loca_title)
+                            .snippet(str)
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_mini));
 
             mMap.addMarker(options);

@@ -18,12 +18,12 @@ public class LoadingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         try {
             intent = getIntent();
             String gotoActivity = intent.getStringExtra("goto");
             callerClass = Class.forName(getPackageName() + ".ui." + gotoActivity);
 
-            super.onCreate(savedInstanceState);
             uiHandler = new Handler(); // anything posted to this handler will run on the UI Thread
             System.out.println("LoadingScreenActivity  screen started");
             setContentView(R.layout.activity_loading);
