@@ -210,7 +210,7 @@ public class LocationListActivity extends AppCompatActivity {
                     return true;
 
                 case R.id.sync:
-                    Toast.makeText(this,"sync created",Toast.LENGTH_LONG).show();
+//                    Toast.makeText(this,"sync created",Toast.LENGTH_LONG).show();
                     if(Commons.hasActiveInternetConnection(this)){
 
                         syncAllNewUnsyncedMarkers();

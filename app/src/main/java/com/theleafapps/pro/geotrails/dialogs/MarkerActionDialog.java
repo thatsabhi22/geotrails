@@ -44,8 +44,8 @@ public class MarkerActionDialog extends DialogFragment implements View.OnClickLi
                 public void onClick(DialogInterface dialog, int which) {
 
                     Intent intent;
-                    Toast.makeText(getActivity(),
-                            "Question Selected ->" + markerLongPressActionArray[which], Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getActivity(),
+//                            "Question Selected ->" + markerLongPressActionArray[which], Toast.LENGTH_LONG).show();
 
                     if (TextUtils.equals(markerLongPressActionArray[which], "Edit")) {
                         intent = new Intent(getActivity(), AddDataActivity.class);

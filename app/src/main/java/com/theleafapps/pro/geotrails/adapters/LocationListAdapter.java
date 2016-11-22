@@ -155,7 +155,7 @@ public class LocationListAdapter extends
                     intent.putExtra("caller", "LocationListActivity");
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     mContext.startActivity(intent);
-                    Toast.makeText(mContext,"card clicked",Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mContext,"card clicked",Toast.LENGTH_SHORT).show();
                     //###################################################
 
                 }
@@ -164,7 +164,7 @@ public class LocationListAdapter extends
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    Toast.makeText(mContext,"card clicked long",Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mContext,"card clicked long",Toast.LENGTH_SHORT).show();
                     String ofl_loca_id     =   getOflLocaIdByCardPosition(view);
                     Bundle bundle          =   new Bundle();
                     bundle.putString("ofl_loca_id",ofl_loca_id);

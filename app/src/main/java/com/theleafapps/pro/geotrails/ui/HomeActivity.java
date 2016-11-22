@@ -14,10 +14,12 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -39,15 +41,18 @@ import java.util.List;
 
 public class HomeActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
+    Intent intent;
     private GoogleMap mMap;
     private String TAG = "Tangho";
     private int ENABLE_LOCATION = 1;
 
+    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 10;
+
     Location location;
     LocationManager locationManager;
     String provider;
-    ImageView mark_location_button;
-    ImageView list_button;
+    ImageView mark_location_button,list_button,logo_text;
+    TextView about_us_tv;
     String multiMarker;
 
     @Override
@@ -55,11 +60,18 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        Intent intent        = getIntent();
+        intent               = getIntent();
         multiMarker          = intent.getStringExtra("multimarker");
 
         mark_location_button = (ImageView) findViewById(R.id.mark_location_button);
         list_button          = (ImageView) findViewById(R.id.list_button);
+        logo_text            = (ImageView) findViewById(R.id.logo_text);
+        about_us_tv          = (TextView) findViewById(R.id.about_us);
+
+        mark_location_button.bringToFront();
+        list_button.bringToFront();
+        about_us_tv.bringToFront();
+        logo_text.bringToFront();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -75,7 +87,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         if (Commons.accessT != null) {
-            Toast.makeText(this, "Home Activity >>" + Commons.accessT.getApplicationId(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, "Home Activity >>" + Commons.accessT.getApplicationId(), Toast.LENGTH_LONG).show();
         }
 
         checkIfLocationEnabled(this);
@@ -88,9 +100,45 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d(TAG, "Location not found");
         }
 
+        about_us_tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent = new Intent(HomeActivity.this,AboutUsActivity.class);
+                startActivity(intent);
+            }
+        });
+
         mark_location_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // Here, thisActivity is the current activity
+                if (ContextCompat.checkSelfPermission(HomeActivity.this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(HomeActivity.this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                        // Show an explanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+
+                    } else {
+
+                        // No explanation needed, we can request the permission.
+
+                        ActivityCompat.requestPermissions(HomeActivity.this,
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+
+                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                        // app-defined int constant. The callback method gets the
+                        // result of the request.
+                    }
+                }
+
                 if (Commons.accessT != null) {
                     checkIfLocationEnabled(HomeActivity.this);
                     if (ActivityCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -99,16 +147,16 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                     location = locationManager.getLastKnownLocation(provider);
                     if (location != null) {
-                        Intent intent = new Intent(HomeActivity.this, AddDataActivity.class);
+                        intent = new Intent(HomeActivity.this, AddDataActivity.class);
                         intent.putExtra("userLat", location.getLatitude());
                         intent.putExtra("userLong", location.getLongitude());
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     } else {
-                        Toast.makeText(HomeActivity.this,"Enable your Location",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeActivity.this,"Please enable your Location",Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Intent intent = new Intent(HomeActivity.this, AuthActivity.class);
+                    intent = new Intent(HomeActivity.this, AuthActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
@@ -118,7 +166,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         list_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, LocationListActivity.class);
+                intent = new Intent(HomeActivity.this, LocationListActivity.class);
                 intent.putExtra("caller", "HomeActivity");
                 startActivity(intent);
             }
@@ -167,8 +215,6 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
             insertMarkers(markers.markerList,sydney);
         }
     }
-
-
 
     @Override
     public void onLocationChanged(Location locationUpdate) {

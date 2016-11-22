@@ -48,7 +48,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.theleafapps.pro.geotrails.ui.AddDataActivity" />
         </activity>
-        <activity android:name=".ui.LoadingActivity"></activity>
+        <activity android:name=".ui.LoadingActivity" />
+        <activity android:name=".ui.AboutUsActivity"></activity>
     </application>
 
 </manifest>
