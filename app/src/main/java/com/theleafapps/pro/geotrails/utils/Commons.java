@@ -23,10 +23,15 @@ import java.util.List;
  */
 public class Commons {
 
+    public static int user_id;
+
     public static AccessToken accessT;
 
     public static String insert_usr_st = "INSERT INTO gt_user "+
-                "(user_dev_id,fb_id,first_name,last_name,gender,email,current_location) values (?,?,?,?,?,?,?);";
+                "(user_dev_id,user_id,first_name,last_name,gender,email,current_location,fb_id) values (?,?,?,?,?,?,?,?);";
+
+    public static String update_usr_st =  "UPDATE gt_user SET user_dev_id = ?,user_id = ?,first_name = ?,last_name = ?," +
+            "gender = ?,email = ?,current_location = ? WHERE fb_id = ?";
 
     public static String get_usr_by_fb_id_st = "SELECT user_id FROM gt_user where fb_id = ?";
 
@@ -37,9 +42,6 @@ public class Commons {
     public static String update_all_new_unsync_markers = "UPDATE marker SET is_sync = 1, loca_id = ? where ofl_loca_id = ?";
 
     public static String update_all_old_unsync_markers = "UPDATE marker SET is_sync = 1 where ofl_loca_id = ?";
-
-    public static String update_usr_st =  "UPDATE gt_user SET user_dev_id = ?,fb_id = ?,first_name = ?,last_name = ?,gender = ?," +
-            "email = ?,current_location = ? WHERE user_id = ?";
 
     public static String insert_marker_st = "INSERT INTO marker (user_lat,user_long,user_id,user_add,loca_title," +
             "loca_desc,geocode_add,is_star,is_sync,ofl_loca_id,is_deleted) values (?,?,?,?,?,?,?,?,?,(SELECT IFNULL(MAX(ofl_loca_id), 10000) + 1 FROM marker),0)";
@@ -58,7 +60,7 @@ public class Commons {
             "where ofl_loca_id = ? ";
 
     public static String get_all_markers  = "SELECT loca_id,ofl_loca_id,user_lat,user_long,user_id,user_add,loca_title,geocode_add, " +
-            "loca_desc,is_star,is_sync,created_on,modified_on from marker where is_deleted = 0 ORDER BY modified_on DESC";
+            "loca_desc,is_star,is_sync,is_deleted,created_on,modified_on from marker where is_deleted = 0 ORDER BY modified_on DESC";
 
     public static String get_all_markers_with_ids = "SELECT * FROM marker where ofl_loca_id in (?)";
 
@@ -152,6 +154,7 @@ public class Commons {
         int geocodeAddIndex = c.getColumnIndex("geocode_add");
         int isStarIndex     = c.getColumnIndex("is_star");
         int isSyncIndex     = c.getColumnIndex("is_sync");
+        int isDeletedIndex  = c.getColumnIndex("is_deleted");
         int c_on            = c.getColumnIndex("created_on");
         int m_on            = c.getColumnIndex("modified_on");
 
@@ -172,6 +175,7 @@ public class Commons {
                 marker.geo_code_add =   c.getString(geocodeAddIndex);
                 marker.is_star      =   c.getInt(isStarIndex) == 1 ? "true" : "false";
                 marker.is_sync      =   c.getInt(isSyncIndex);
+                marker.is_deleted   =   c.getInt(isDeletedIndex);
                 marker.created_on   =   c.getString(c_on);
                 marker.modified_on  =   c.getString(m_on);
 

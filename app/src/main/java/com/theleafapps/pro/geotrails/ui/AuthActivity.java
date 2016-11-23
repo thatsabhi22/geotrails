@@ -1,6 +1,8 @@
 package com.theleafapps.pro.geotrails.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -27,6 +29,7 @@ import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.models.User;
 import com.theleafapps.pro.geotrails.models.multiples.Users;
 import com.theleafapps.pro.geotrails.tasks.AddUserTask;
+import com.theleafapps.pro.geotrails.tasks.GetUserByFbIdTask;
 import com.theleafapps.pro.geotrails.utils.Commons;
 import com.theleafapps.pro.geotrails.utils.DbHelper;
 
@@ -45,6 +48,8 @@ public class AuthActivity extends AppCompatActivity {
     private DbHelper dbHelper;
     Intent intent;
     String TAG = "Tangho";
+    SharedPreferences sp;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,8 @@ public class AuthActivity extends AppCompatActivity {
 
         loginButton =   (LoginButton)findViewById(R.id.login_button);
         skip_button =   (ImageButton) findViewById(R.id.skip_button);
+
+        sp = getSharedPreferences("g_t_data", Context.MODE_PRIVATE);
 
         skip_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,42 +162,62 @@ public class AuthActivity extends AppCompatActivity {
             if(TextUtils.isEmpty(location)){location = "";}
 
             String fb_id        =   object.get("id").toString();
+
+//#######################################################################
+//################ Insert record on cloud ###############################
+
+            GetUserByFbIdTask getUserByFbIdTask = new GetUserByFbIdTask(this,fb_id);
+            getUserByFbIdTask.execute().get();
+
+            int userRec;
+
+            if(getUserByFbIdTask.userRec == null){
+
+                Users users           =   new Users();
+                User user             =   new User();
+                user.user_dev_id      =   dev_id;
+                user.current_location =   location;
+                user.email            =   email;
+                user.first_name       =   first_name;
+                user.last_name        =   last_name;
+                user.gender           =   gender;
+                user.fb_id            =   fb_id;
+
+                users.userList.add(user);
+                AddUserTask addUserTask = new AddUserTask(this,users);
+                addUserTask.execute().get();
+                userRec = addUserTask.userId;
+
+            }else{
+                userRec               =   getUserByFbIdTask.userRec.user_id;
+            }
+
+
+//######################################################################
+
             Cursor c            =   db.rawQuery(Commons.get_usr_by_fb_id_st, new String[]{fb_id});
             int count           =   c.getCount();
 
             if(count > 0){
-                int userIdIndex =   c.getColumnIndex("user_id");
-                c.moveToFirst();
-                user_id         =   c.getInt(userIdIndex);
                 stmt            =   db.compileStatement(Commons.update_usr_st);
-                stmt.bindString(8,String.valueOf(user_id));
             }else{
                 stmt            =   db.compileStatement(Commons.insert_usr_st);
             }
             stmt.bindString(1, dev_id);
-            stmt.bindString(2, fb_id);
+            stmt.bindString(2, String.valueOf(userRec));
             stmt.bindString(3, first_name);
             stmt.bindString(4, last_name);
             stmt.bindString(5, gender);
             stmt.bindString(6, email);
             stmt.bindString(7, location);
+            stmt.bindString(8, String.valueOf(fb_id));
+
             stmt.execute();
             c.close();
 
-            Users users           =   new Users();
-            User user             =   new User();
-            user.user_dev_id      =   dev_id;
-            user.current_location =   location;
-            user.email            =   email;
-            user.first_name       =   first_name;
-            user.last_name        =   last_name;
-            user.gender           =   gender;
-            user.fb_id            =   fb_id;
-
-            users.userList.add(user);
-            AddUserTask addUserTask = new AddUserTask(this,users);
-            addUserTask.execute().get();
-
+            editor = sp.edit();
+            editor.putInt("u_id",userRec);
+            editor.commit();
 
         }catch (JSONException e) {
             e.printStackTrace();

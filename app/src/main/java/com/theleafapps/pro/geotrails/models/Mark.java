@@ -44,6 +44,9 @@ public class Mark extends BaseRecord {
     @JsonProperty("is_star")
     public String is_star;
 
+    @JsonProperty("is_deleted")
+    public int is_deleted;
+
     @JsonProperty("is_sync")
     public int is_sync;
 }

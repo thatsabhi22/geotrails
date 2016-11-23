@@ -3,6 +3,7 @@ package com.theleafapps.pro.geotrails.ui;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -67,17 +68,19 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     TextView geo_code_add_tv,loca_id_hid_tv;
     EditText location_title_et,location_user_address_et,location_desc_et;
     ImageButton mark_button;
+    SharedPreferences sp;
 //    ImageView add_location_image_button;
     String TAG = "Tangho";
-    String ofl_loca_id;
+    String ofl_loca_id,imageFolderName;
+    int u_id;
     Address geoAddress;
     ActionBar actionBar;
-    String imageFolderName;
     List<String> imageList;
     LayoutInflater inflater;
     RelativeLayout thumbnailContainer;
     ImageView thumbnail;
     Mark updateMarker;
+    private final String DEFAULT_STR = "NA";
     private static final int PICK_IMAGE_ID = 234;
 
     @Override
@@ -95,19 +98,21 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
 
         Intent recIntent            =   getIntent();
         imageList                   =   new ArrayList<String>();
+        sp                          =   getSharedPreferences("g_t_data",Context.MODE_PRIVATE);
+        u_id                        =   sp.getInt("u_id",0);
         ofl_loca_id                 =   recIntent.getStringExtra("ofl_loca_id");
         userLat                     =   recIntent.getDoubleExtra("userLat",0);
         userLong                    =   recIntent.getDoubleExtra("userLong",0);
         inflater                    =   (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-//        thumbnailContainer          =   (RelativeLayout) findViewById(R.id.thumbnailContainer);
+//      thumbnailContainer          =   (RelativeLayout) findViewById(R.id.thumbnailContainer);
         loca_id_hid_tv              =   (TextView) findViewById(R.id.loca_id_hid_tv);
         geo_code_add_tv             =   (TextView) findViewById(R.id.reverse_geo_add_tv);
         location_title_et           =   (EditText) findViewById(R.id.location_title_et);
         location_user_address_et    =   (EditText) findViewById(R.id.location_user_address_et);
         location_desc_et            =   (EditText) findViewById(R.id.location_desc_et);
         mark_button                 =   (ImageButton) findViewById(R.id.mark_button);
-//        add_location_image_button   =   (ImageView) findViewById(R.id.add_location_image_button);
+//      add_location_image_button   =   (ImageView) findViewById(R.id.add_location_image_button);
 
 
         if(!TextUtils.isEmpty(ofl_loca_id)){
@@ -202,7 +207,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
             SQLiteStatement stmt    =   db.compileStatement(query);
             stmt.bindDouble(1, userLat);
             stmt.bindDouble(2, userLong);
-            stmt.bindLong(3, 1);
+            stmt.bindLong(3, u_id);
             stmt.bindString(4, location_user_address_et.getText().toString());
             stmt.bindString(5, location_title_et.getText().toString());
             stmt.bindString(6, location_desc_et.getText().toString());
@@ -245,6 +250,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         SQLiteDatabase db   =   dbHelper.getWritableDatabase();
         String geoCodeAdd   =   executeDBQuery(db, Commons.insert_marker_st);
 
+
         int ofl_loca_id     =   0;
         String query        =   Commons.select_last_inserted_loca_id;
         Cursor c            =   db.rawQuery(query, null);
@@ -257,7 +263,8 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         Mark marker         =   new Mark();
         marker.user_lat     =   userLat;
         marker.user_long    =   userLong;
-        marker.user_id      =   1;
+        marker.user_id      =   u_id;
+        marker.is_deleted   =   0;
 
         marker.user_add     = location_user_address_et.getText().toString();
         marker.loca_title   = location_title_et.getText().toString();
