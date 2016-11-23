@@ -190,12 +190,6 @@ public class LocationListActivity extends AppCompatActivity {
         return markers;
     }
 
-    public void syncRecords(){
-
-
-
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
