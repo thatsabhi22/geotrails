@@ -33,4 +33,17 @@
         android:layout_below="@+id/login_button"
         android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:text="No worries\n We do not post anything on your wall."
+        android:layout_width="wrap_content"
+        android:textSize="15sp"
+        android:textStyle="normal"
+        android:gravity="center_horizontal"
+        android:textColor="@color/Red"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="66dp"
+        android:id="@+id/textView" />
+
 </RelativeLayout>

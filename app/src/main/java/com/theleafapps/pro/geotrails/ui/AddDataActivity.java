@@ -200,7 +200,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
     @NonNull
-    private String executeDBQuery(SQLiteDatabase db, String query) {
+    private String executeDBQuery(SQLiteDatabase db, String query, String queryType) {
 
         String geoCodeAdd = null;
 
@@ -231,15 +231,22 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
             stmt.bindLong(9, 0);
 
             stmt.execute();
-            Toast.makeText(this,"The location is updated successfully",Toast.LENGTH_SHORT).show();
 
+            switch(queryType) {
+                case "update":
+                    Toast.makeText(this, "The location is updated successfully", Toast.LENGTH_SHORT).show();
+                    break;
+                case "insert":
+                    Toast.makeText(this, "The location is added successfully", Toast.LENGTH_SHORT).show();
+                    break;
+            }
         return geoCodeAdd;
     }
 
     private void EditMarker(){
         dbHelper            =   new DbHelper(AddDataActivity.this);
         SQLiteDatabase db   =   dbHelper.getWritableDatabase();
-        executeDBQuery(db,Commons.update_marker_st);
+        executeDBQuery(db,Commons.update_marker_st,"update");
 
         intent = new Intent(this,LocationListActivity.class);
         startActivity(intent);
@@ -248,7 +255,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     private void AddNewMarker() throws InterruptedException, ExecutionException {
         dbHelper            =   new DbHelper(AddDataActivity.this);
         SQLiteDatabase db   =   dbHelper.getWritableDatabase();
-        String geoCodeAdd   =   executeDBQuery(db, Commons.insert_marker_st);
+        String geoCodeAdd   =   executeDBQuery(db, Commons.insert_marker_st,"insert");
 
 
         int ofl_loca_id     =   0;
