@@ -11,11 +11,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.transition.Transition;
 import android.view.View;
 import android.widget.Toast;
 
 import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.ui.AddDataActivity;
+import com.theleafapps.pro.geotrails.ui.LoadingActivity;
+import com.theleafapps.pro.geotrails.utils.Commons;
 import com.theleafapps.pro.geotrails.utils.DbHelper;
 
 /**
@@ -27,7 +30,9 @@ public class MarkerActionDialog extends DialogFragment implements View.OnClickLi
     Resources res;
     String ofl_loca_id;
     DbHelper dbHelper;
-
+    Dialog dialogI;
+    Context context;
+    Intent intent;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -44,8 +49,8 @@ public class MarkerActionDialog extends DialogFragment implements View.OnClickLi
                 public void onClick(DialogInterface dialog, int which) {
 
                     Intent intent;
-//                    Toast.makeText(getActivity(),
-//                            "Question Selected ->" + markerLongPressActionArray[which], Toast.LENGTH_LONG).show();
+                    dialogI         = (Dialog) dialog;
+                    context         = dialogI.getContext();
 
                     if (TextUtils.equals(markerLongPressActionArray[which], "Edit")) {
                         intent = new Intent(getActivity(), AddDataActivity.class);
@@ -69,21 +74,29 @@ public class MarkerActionDialog extends DialogFragment implements View.OnClickLi
     }
 
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+
         @Override
         public void onClick(DialogInterface dialog, int which) {
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
                     //Yes button clicked
-                    Dialog dialogI  = (Dialog) dialog;
-                    Context context = dialogI.getContext();
+                    dialogI         = (Dialog) dialog;
+                    context         = dialogI.getContext();
 
                     dbHelper            =   new DbHelper(context);
                     SQLiteDatabase db   =   dbHelper.getWritableDatabase();
-                    SQLiteStatement stmt = db.compileStatement("UPDATE marker SET is_deleted = 1, is_sync = 0 where ofl_loca_id = ?;");
+                    SQLiteStatement stmt = db.compileStatement(Commons.delete_marker_loca_id);
                     stmt.bindString(1, String.valueOf(ofl_loca_id));
                     stmt.execute();
 
                     Toast.makeText(context,"The location is deleted successfully",Toast.LENGTH_LONG).show();
+
+                    intent = new Intent(context, LoadingActivity.class);
+                    intent.putExtra("goto","LocationListActivity");
+                    intent.putExtra("caller","HomeActivity");
+                    intent.putExtra("wait_time",1000);
+                    context.startActivity(intent);
+
                     break;
 
                 case DialogInterface.BUTTON_NEGATIVE:

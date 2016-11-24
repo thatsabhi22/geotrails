@@ -118,6 +118,7 @@ public class AuthActivity extends AppCompatActivity {
                     }
 
                     intent      =   new Intent(AuthActivity.this,LoadingActivity.class);
+                    intent.putExtra("wait_time",3000);
                     intent.putExtra("goto","HomeActivity");
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);

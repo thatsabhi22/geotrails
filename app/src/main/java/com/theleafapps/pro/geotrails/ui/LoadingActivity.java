@@ -11,7 +11,7 @@ import com.theleafapps.pro.geotrails.R;
 public class LoadingActivity extends AppCompatActivity {
 
     //Introduce a delay
-    private final int WAIT_TIME = 3500;
+    int wait_time;
     Class callerClass;
     private Handler uiHandler;
     Intent intent;
@@ -20,11 +20,11 @@ public class LoadingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            intent = getIntent();
-            String gotoActivity = intent.getStringExtra("goto");
-            callerClass = Class.forName(getPackageName() + ".ui." + gotoActivity);
-
-            uiHandler = new Handler(); // anything posted to this handler will run on the UI Thread
+            intent              =   getIntent();
+            String gotoActivity =   intent.getStringExtra("goto");
+            wait_time           =   intent.getIntExtra("wait_time",1000);
+            callerClass         =   Class.forName(getPackageName() + ".ui." + gotoActivity);
+            uiHandler           =   new Handler(); // anything posted to this handler will run on the UI Thread
             System.out.println("LoadingScreenActivity  screen started");
             setContentView(R.layout.activity_loading);
             findViewById(R.id.mainSpinner).setVisibility(View.VISIBLE);
@@ -45,7 +45,7 @@ public class LoadingActivity extends AppCompatActivity {
                 public void run() {
                     try {
                         // This is the delay
-                        Thread.sleep(WAIT_TIME);
+                        Thread.sleep(wait_time);
                         // This will run on a background thread
                         //Simulating a long running task
                         Thread.sleep(1000);

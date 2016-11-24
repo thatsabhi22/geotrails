@@ -70,6 +70,8 @@ public class Commons {
 
     public static String update_marker_loca_id = "UPDATE marker SET loca_id=? where ofl_loca_id=?";
 
+    public static String delete_marker_loca_id = "UPDATE marker SET is_deleted = 1, is_sync = 0 where ofl_loca_id = ?";
+
     public static String select_last_inserted_loca_id = "SELECT ofl_loca_id from marker order by ofl_loca_id DESC limit 1";
 
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

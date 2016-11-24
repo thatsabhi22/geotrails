@@ -122,8 +122,6 @@ public class LocationListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
-
     public Marks syncAllNewUnsyncedMarkers(){
 
         List<Integer> ofl_loca_id_list = new ArrayList<>();
@@ -212,6 +210,7 @@ public class LocationListActivity extends AppCompatActivity {
 
                         intent = new Intent(this,LoadingActivity.class);
                         intent.putExtra("goto","LocationListActivity");
+                        intent.putExtra("wait_time",2000);
                         startActivity(intent);
 
                     }else{
