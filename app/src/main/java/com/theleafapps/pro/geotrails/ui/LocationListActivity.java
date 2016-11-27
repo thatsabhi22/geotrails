@@ -1,6 +1,8 @@
 package com.theleafapps.pro.geotrails.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,11 +20,13 @@ import android.widget.Toast;
 
 import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.adapters.LocationListAdapter;
+import com.theleafapps.pro.geotrails.app.MainApplication;
 import com.theleafapps.pro.geotrails.models.Mark;
 import com.theleafapps.pro.geotrails.models.multiples.Marks;
 import com.theleafapps.pro.geotrails.tasks.AddMarkerTask;
 import com.theleafapps.pro.geotrails.tasks.UpdateMarkerIsStarTask;
 import com.theleafapps.pro.geotrails.utils.Commons;
+import com.theleafapps.pro.geotrails.utils.DbHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +43,8 @@ public class LocationListActivity extends AppCompatActivity {
     Toolbar toolbar;
     ActionBar actionBar;
     String caller;
+    int u_id;
+    SharedPreferences sp;
     public static String multiMarkerString;
 
     @Override
@@ -54,6 +60,8 @@ public class LocationListActivity extends AppCompatActivity {
         toolbar         =   (Toolbar) findViewById(R.id.toolbar_location_list);
         no_location_tv  =   (TextView) findViewById(R.id.no_location_tv);
         mark_now_button =   (ImageView) findViewById(R.id.mark_now_button);
+        sp              =   getSharedPreferences("g_t_data", Context.MODE_PRIVATE);
+        u_id            =   sp.getInt("u_id",0);
         setSupportActionBar(toolbar);
 
         actionBar = getSupportActionBar();
@@ -61,7 +69,9 @@ public class LocationListActivity extends AppCompatActivity {
         actionBar.setIcon(R.drawable.logo_small);
         actionBar.setTitle("  GeoTrails");
 
-        markers     =   Commons.getAllMarkers(Commons.get_all_markers);
+        if(u_id != 0)
+            markers     =   Commons.getAllMarkersWithId(DbHelper.get_all_markers,u_id);
+
         locationListRecyclerView
                     =   (RecyclerView) findViewById(R.id.location_list_recycler_view);
 
@@ -71,7 +81,6 @@ public class LocationListActivity extends AppCompatActivity {
             setEmptyLocationList();
         }
     }
-
 
     private void setEmptyLocationList() {
         locationListRecyclerView.setVisibility(View.GONE);
@@ -127,7 +136,7 @@ public class LocationListActivity extends AppCompatActivity {
         List<Integer> ofl_loca_id_list = new ArrayList<>();
         Marks markers = null;
         try {
-            markers = Commons.getAllMarkers(Commons.get_all_new_unsynced_marker);
+            markers = Commons.getAllMarkers(DbHelper.get_all_new_unsynced_marker);
             for(Mark marker: markers.markerList){
                 ofl_loca_id_list.add(marker.ofl_loca_id);
             }
@@ -143,13 +152,15 @@ public class LocationListActivity extends AppCompatActivity {
                 for(Mark mark:responseMarkers.markerList){
                     param.add(String.valueOf(mark.loca_id));
                     param.add(String.valueOf(ofl_loca_id_list.get(i)));
-                    Commons.executeLocalQuery(this,Commons.update_all_new_unsync_markers,param);
+                    Commons.executeLocalQuery(this,DbHelper.update_all_new_unsync_markers,param);
                     i++;
                 }
             }
         } catch (InterruptedException e) {
+            MainApplication.getInstance().trackException(e);
             e.printStackTrace();
         } catch (ExecutionException e) {
+            MainApplication.getInstance().trackException(e);
             e.printStackTrace();
         }
         return markers;
@@ -161,7 +172,7 @@ public class LocationListActivity extends AppCompatActivity {
         Marks markers = null;
 
         try {
-            markers = Commons.getAllMarkers(Commons.get_all_old_unsynced_marker);
+            markers = Commons.getAllMarkers(DbHelper.get_all_old_unsynced_marker);
             for(Mark marker: markers.markerList){
                 ofl_loca_id_list.add(marker.ofl_loca_id);
             }
@@ -176,13 +187,15 @@ public class LocationListActivity extends AppCompatActivity {
 
                 for(Mark mark:responseMarkers.markerList){
                     param.add(String.valueOf(ofl_loca_id_list.get(i)));
-                    Commons.executeLocalQuery(this,Commons.update_all_old_unsync_markers,param);
+                    Commons.executeLocalQuery(this,DbHelper.update_all_old_unsync_markers,param);
                     i++;
                 }
             }
         } catch (InterruptedException e) {
+            MainApplication.getInstance().trackException(e);
             e.printStackTrace();
         } catch (ExecutionException e) {
+            MainApplication.getInstance().trackException(e);
             e.printStackTrace();
         }
         return markers;
@@ -237,6 +250,7 @@ public class LocationListActivity extends AppCompatActivity {
                     return super.onOptionsItemSelected(item);
             }
         } catch (ClassNotFoundException e) {
+            MainApplication.getInstance().trackException(e);
             e.printStackTrace();
         }
         return false;

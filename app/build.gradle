@@ -52,4 +52,5 @@ dependencies {
     compile 'com.android.support:support-v4:24.2.0'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     compile 'eu.davidea:flipview:1.1.1'
+    compile 'com.google.android.gms:play-services-analytics:.4.0';
 }

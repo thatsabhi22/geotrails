@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.theleafapps.pro.geotrails.R;
+import com.theleafapps.pro.geotrails.app.MainApplication;
 
 public class LoadingActivity extends AppCompatActivity {
 
@@ -53,12 +54,14 @@ public class LoadingActivity extends AppCompatActivity {
                         uiHandler.post(onUi);
 
                     } catch (InterruptedException e) {
+                        MainApplication.getInstance().trackException(e);
                         e.printStackTrace();
                     }
                 }
             };
             new Thread(background).start();
         }catch (ClassNotFoundException e) {
+            MainApplication.getInstance().trackException(e);
             e.printStackTrace();
         }
     }

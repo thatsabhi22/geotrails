@@ -42,6 +42,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.theleafapps.pro.geotrails.R;
+import com.theleafapps.pro.geotrails.app.MainApplication;
 import com.theleafapps.pro.geotrails.models.Mark;
 import com.theleafapps.pro.geotrails.models.multiples.Marks;
 import com.theleafapps.pro.geotrails.tasks.AddMarkerTask;
@@ -161,6 +162,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                 }
             }
         } catch (IOException e) {
+            MainApplication.getInstance().trackException(e);
             geo_code_add_tv.setVisibility(View.GONE);
             Toast.makeText(this,"You're Offline!! , Address could not be determined.",Toast.LENGTH_SHORT).show();
             //e.printStackTrace();
@@ -190,8 +192,10 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                         }
 
                     } catch (InterruptedException e) {
+                        MainApplication.getInstance().trackException(e);
                         e.printStackTrace();
                     } catch (ExecutionException e) {
+                        MainApplication.getInstance().trackException(e);
                         e.printStackTrace();
                     }
                 }
@@ -246,7 +250,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     private void EditMarker(){
         dbHelper            =   new DbHelper(AddDataActivity.this);
         SQLiteDatabase db   =   dbHelper.getWritableDatabase();
-        executeDBQuery(db,Commons.update_marker_st,"update");
+        executeDBQuery(db,DbHelper.update_marker_st,"update");
 
         intent = new Intent(this,LocationListActivity.class);
         startActivity(intent);
@@ -255,11 +259,11 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     private void AddNewMarker() throws InterruptedException, ExecutionException {
         dbHelper            =   new DbHelper(AddDataActivity.this);
         SQLiteDatabase db   =   dbHelper.getWritableDatabase();
-        String geoCodeAdd   =   executeDBQuery(db, Commons.insert_marker_st,"insert");
+        String geoCodeAdd   =   executeDBQuery(db, DbHelper.insert_marker_st,"insert");
 
 
         int ofl_loca_id     =   0;
-        String query        =   Commons.select_last_inserted_loca_id;
+        String query        =   DbHelper.select_last_inserted_loca_id;
         Cursor c            =   db.rawQuery(query, null);
         if (c != null && c.moveToFirst()) {
             ofl_loca_id     =   (int) c.getLong(0);
@@ -286,11 +290,11 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
 
         if (result) {
 
-            SQLiteStatement stmt1 = db.compileStatement(Commons.update_marker_sync);
+            SQLiteStatement stmt1 = db.compileStatement(DbHelper.update_marker_sync);
             stmt1.bindLong(1, ofl_loca_id);
             stmt1.execute();
 
-            SQLiteStatement stmt2 = db.compileStatement(Commons.update_marker_loca_id);
+            SQLiteStatement stmt2 = db.compileStatement(DbHelper.update_marker_loca_id);
             stmt2.bindLong(1, addMarkerTask.locaId);
             stmt2.bindLong(2, ofl_loca_id);
             stmt2.execute();
@@ -318,6 +322,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
                     break;
             }
         } catch (IOException e) {
+            MainApplication.getInstance().trackException(e);
             e.printStackTrace();
         }
     }
@@ -360,6 +365,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
             thumbnail.setImageBitmap(bitmapImage);
             thumbnailContainer.addView(thumbnail);
         } catch (Exception e) {
+            MainApplication.getInstance().trackException(e);
             e.printStackTrace();
         } finally {
             fos.close();

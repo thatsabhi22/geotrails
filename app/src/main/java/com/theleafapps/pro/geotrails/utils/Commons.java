@@ -1,12 +1,22 @@
 package com.theleafapps.pro.geotrails.utils;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.StrictMode;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.facebook.AccessToken;
@@ -27,54 +37,26 @@ public class Commons {
 
     public static AccessToken accessT;
 
-    public static String insert_usr_st = "INSERT INTO gt_user "+
-                "(user_dev_id,user_id,first_name,last_name,gender,email,current_location,fb_id) values (?,?,?,?,?,?,?,?);";
-
-    public static String update_usr_st =  "UPDATE gt_user SET user_dev_id = ?,user_id = ?,first_name = ?,last_name = ?," +
-            "gender = ?,email = ?,current_location = ? WHERE fb_id = ?";
-
-    public static String get_usr_by_fb_id_st = "SELECT user_id FROM gt_user where fb_id = ?";
-
-    public static String get_all_new_unsynced_marker = "SELECT * FROM marker where is_sync = 0 AND loca_id IS NULL";
-
-    public static String get_all_old_unsynced_marker = "SELECT * FROM marker where is_sync = 0 AND loca_id IS NOT NULL";
-
-    public static String update_all_new_unsync_markers = "UPDATE marker SET is_sync = 1, loca_id = ? where ofl_loca_id = ?";
-
-    public static String update_all_old_unsync_markers = "UPDATE marker SET is_sync = 1 where ofl_loca_id = ?";
-
-    public static String insert_marker_st = "INSERT INTO marker (user_lat,user_long,user_id,user_add,loca_title," +
-            "loca_desc,geocode_add,is_star,is_sync,ofl_loca_id,is_deleted) values (?,?,?,?,?,?,?,?,?,(SELECT IFNULL(MAX(ofl_loca_id), 10000) + 1 FROM marker),0)";
-
-    public static String update_marker_st = "UPDATE marker set " +
-            "user_lat = ? ," +
-            "user_long = ? ," +
-            "user_id = ? ," +
-            "user_add = ? ," +
-            "loca_title = ? ," +
-            "loca_desc = ? ," +
-            "geocode_add = ? ," +
-            "is_star = ? ," +
-            "is_sync = ?  ," +
-            "modified_on = CURRENT_TIMESTAMP " +
-            "where ofl_loca_id = ? ";
-
-    public static String get_all_markers  = "SELECT loca_id,ofl_loca_id,user_lat,user_long,user_id,user_add,loca_title,geocode_add, " +
-            "loca_desc,is_star,is_sync,is_deleted,created_on,modified_on from marker where is_deleted = 0 ORDER BY modified_on DESC";
-
-    public static String get_all_markers_with_ids = "SELECT * FROM marker where ofl_loca_id in (?)";
-
-    public static String update_marker_star_sync_ofl = "UPDATE marker SET is_star = ?, is_sync = ? where ofl_loca_id = ?;";
-
-    public static String update_marker_sync = "UPDATE marker SET is_sync=1 where ofl_loca_id=?";
-
-    public static String update_marker_loca_id = "UPDATE marker SET loca_id=? where ofl_loca_id=?";
-
-    public static String delete_marker_loca_id = "UPDATE marker SET is_deleted = 1, is_sync = 0 where ofl_loca_id = ?";
-
-    public static String select_last_inserted_loca_id = "SELECT ofl_loca_id from marker order by ofl_loca_id DESC limit 1";
-
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    public static final int REQUEST_APP_SETTINGS = 168;
+
+    final static int  MY_PERMISSIONS_REQUEST_LOCATION = 1;
+
+    public static final String[] requiredPermissions = new String[]{
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            /* ETC.. */
+    };
+
+    public static boolean hasPermissions(Context context,@NonNull String... permissions) {
+        for (String permission : permissions)
+            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(context,permission))
+                return false;
+        return true;
+    }
 
     public static String randomAlphaNumeric(int count) {
         StringBuilder builder = new StringBuilder();
@@ -83,6 +65,48 @@ public class Commons {
             builder.append(ALPHA_NUMERIC_STRING.charAt(character));
         }
         return builder.toString();
+    }
+
+    private static void goToSettings(Activity activity) {
+        Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.parse("package:" + activity.getPackageName()));
+        myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
+        myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivityForResult(myAppSettings, MY_PERMISSIONS_REQUEST_LOCATION);
+    }
+
+    public static void showPermissionDialog(final Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setCancelable(false);
+        builder.setMessage("Please grant all required permissions\n " +
+                "The App may not function well otherwise.");
+        builder.setTitle("GeoTrails");
+        builder.setPositiveButton("App Settings", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which)
+            {
+//                dialog.dismiss();
+                goToSettings(activity);
+            }
+        });
+
+        builder.show();
+    }
+
+    public static void showNonCancellablePermissionDialog(final Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setCancelable(false);
+        builder.setMessage("Please grant all required permissions\n" +
+                "The App may not function well otherwise.");
+        builder.setTitle("GeoTrails");
+        builder.setPositiveButton("App Settings", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.dismiss();
+                goToSettings(activity);
+            }
+        });
+
+        builder.show();
     }
 
     public static boolean hasActiveInternetConnection(Context context) {
@@ -122,6 +146,16 @@ public class Commons {
 
         Marks markers = new Marks();
         Cursor c = DbHelper.GtrailsDB.rawQuery(query, null);
+
+        populateMarkers(markers, c);
+        c.close();
+        return markers;
+    }
+
+    public static Marks getAllMarkersWithId(String query,int user_id) {
+
+        Marks markers = new Marks();
+        Cursor c = DbHelper.GtrailsDB.rawQuery(query, new String[]{String.valueOf(user_id)});
 
         populateMarkers(markers, c);
         c.close();
@@ -189,7 +223,7 @@ public class Commons {
     public static Marks getAllMarkersWithIds(String multiMarkerString){
         String query = "";
         if(multiMarkerString.matches("^\\d+(,\\d+)*$")) {
-            query = Commons.get_all_markers_with_ids.replace("?",multiMarkerString);
+            query = DbHelper.get_all_markers_with_ids.replace("?",multiMarkerString);
         }
         return Commons.getAllMarkers(query);
     }

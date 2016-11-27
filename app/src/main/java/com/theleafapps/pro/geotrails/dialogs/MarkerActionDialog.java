@@ -85,7 +85,7 @@ public class MarkerActionDialog extends DialogFragment implements View.OnClickLi
 
                     dbHelper            =   new DbHelper(context);
                     SQLiteDatabase db   =   dbHelper.getWritableDatabase();
-                    SQLiteStatement stmt = db.compileStatement(Commons.delete_marker_loca_id);
+                    SQLiteStatement stmt = db.compileStatement(DbHelper.delete_marker_loca_id);
                     stmt.bindString(1, String.valueOf(ofl_loca_id));
                     stmt.execute();
 

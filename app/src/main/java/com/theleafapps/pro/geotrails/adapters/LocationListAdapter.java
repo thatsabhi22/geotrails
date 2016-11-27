@@ -240,7 +240,7 @@ public class LocationListAdapter extends
         try {
             dbHelper = new DbHelper(mContext);
             SQLiteDatabase db = dbHelper.getWritableDatabase();
-            SQLiteStatement stmt = db.compileStatement(Commons.update_marker_star_sync_ofl);
+            SQLiteStatement stmt = db.compileStatement(DbHelper.update_marker_star_sync_ofl);
             stmt.bindString(1, String.valueOf(is_star));
             stmt.bindString(2, String.valueOf(is_sync));
             stmt.bindString(3, String.valueOf(ofl_loca_id));

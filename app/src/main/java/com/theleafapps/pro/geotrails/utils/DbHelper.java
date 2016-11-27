@@ -85,4 +85,51 @@ public class DbHelper extends SQLiteOpenHelper {
                 "created_on DATETIME DEFAULT CURRENT_TIMESTAMP, " +
                 "modified_on DATETIME DEFAULT CURRENT_TIMESTAMP);");
     }
+
+    public static String insert_usr_st = "INSERT INTO gt_user "+
+            "(user_dev_id,user_id,first_name,last_name,gender,email,current_location,fb_id) values (?,?,?,?,?,?,?,?);";
+
+    public static String update_usr_st =  "UPDATE gt_user SET user_dev_id = ?,user_id = ?,first_name = ?,last_name = ?," +
+            "gender = ?,email = ?,current_location = ? WHERE fb_id = ?";
+
+    public static String get_usr_by_fb_id_st = "SELECT user_id FROM gt_user where fb_id = ?";
+
+    public static String get_all_new_unsynced_marker = "SELECT * FROM marker where is_sync = 0 AND loca_id IS NULL";
+
+    public static String get_all_old_unsynced_marker = "SELECT * FROM marker where is_sync = 0 AND loca_id IS NOT NULL";
+
+    public static String update_all_new_unsync_markers = "UPDATE marker SET is_sync = 1, loca_id = ? where ofl_loca_id = ?";
+
+    public static String update_all_old_unsync_markers = "UPDATE marker SET is_sync = 1 where ofl_loca_id = ?";
+
+    public static String insert_marker_st = "INSERT INTO marker (user_lat,user_long,user_id,user_add,loca_title," +
+            "loca_desc,geocode_add,is_star,is_sync,ofl_loca_id,is_deleted) values (?,?,?,?,?,?,?,?,?,(SELECT IFNULL(MAX(ofl_loca_id), 10000) + 1 FROM marker),0)";
+
+    public static String update_marker_st = "UPDATE marker set " +
+            "user_lat = ? ," +
+            "user_long = ? ," +
+            "user_id = ? ," +
+            "user_add = ? ," +
+            "loca_title = ? ," +
+            "loca_desc = ? ," +
+            "geocode_add = ? ," +
+            "is_star = ? ," +
+            "is_sync = ?  ," +
+            "modified_on = CURRENT_TIMESTAMP " +
+            "where ofl_loca_id = ? ";
+
+    public static String get_all_markers  = "SELECT loca_id,ofl_loca_id,user_lat,user_long,user_id,user_add,loca_title,geocode_add, " +
+            "loca_desc,is_star,is_sync,is_deleted,created_on,modified_on from marker where is_deleted = 0 and user_id = ? ORDER BY modified_on DESC";
+
+    public static String get_all_markers_with_ids = "SELECT * FROM marker where ofl_loca_id in (?)";
+
+    public static String update_marker_star_sync_ofl = "UPDATE marker SET is_star = ?, is_sync = ? where ofl_loca_id = ?;";
+
+    public static String update_marker_sync = "UPDATE marker SET is_sync=1 where ofl_loca_id=?";
+
+    public static String update_marker_loca_id = "UPDATE marker SET loca_id=? where ofl_loca_id=?";
+
+    public static String delete_marker_loca_id = "UPDATE marker SET is_deleted = 1, is_sync = 0 where ofl_loca_id = ?";
+
+    public static String select_last_inserted_loca_id = "SELECT ofl_loca_id from marker order by ofl_loca_id DESC limit 1";
 }

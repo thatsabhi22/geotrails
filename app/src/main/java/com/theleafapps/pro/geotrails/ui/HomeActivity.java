@@ -10,11 +10,11 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +33,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.theleafapps.pro.geotrails.R;
+import com.theleafapps.pro.geotrails.app.MainApplication;
 import com.theleafapps.pro.geotrails.models.Mark;
 import com.theleafapps.pro.geotrails.models.multiples.Marks;
 import com.theleafapps.pro.geotrails.utils.Commons;
@@ -45,8 +46,6 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private String TAG = "Tangho";
     private int ENABLE_LOCATION = 1;
-
-    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 10;
 
     Location location;
     LocationManager locationManager;
@@ -86,6 +85,11 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
+        if (Build.VERSION.SDK_INT > 22 && !Commons.hasPermissions(HomeActivity.this,Commons.requiredPermissions)) {
+            Toast.makeText(HomeActivity.this, "Please grant all permissions", Toast.LENGTH_LONG).show();
+            Commons.showNonCancellablePermissionDialog(HomeActivity.this);
+        }
+
         if (Commons.accessT != null) {
 //            Toast.makeText(this, "Home Activity >>" + Commons.accessT.getApplicationId(), Toast.LENGTH_LONG).show();
         }
@@ -112,33 +116,6 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
 
-                // Here, thisActivity is the current activity
-                if (ContextCompat.checkSelfPermission(HomeActivity.this,
-                        Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
-
-                    // Should we show an explanation?
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(HomeActivity.this,
-                            Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                        // Show an explanation to the user *asynchronously* -- don't block
-                        // this thread waiting for the user's response! After the user
-                        // sees the explanation, try again to request the permission.
-
-                    } else {
-
-                        // No explanation needed, we can request the permission.
-
-                        ActivityCompat.requestPermissions(HomeActivity.this,
-                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-
-                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                        // app-defined int constant. The callback method gets the
-                        // result of the request.
-                    }
-                }
-
                 if (Commons.accessT != null) {
                     checkIfLocationEnabled(HomeActivity.this);
                     if (ActivityCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -153,7 +130,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     } else {
-                        Toast.makeText(HomeActivity.this,"Please enable your Location",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeActivity.this, "Weak or No GPS signals, Try Coming in open", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     intent = new Intent(HomeActivity.this, AuthActivity.class);
@@ -242,9 +219,13 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
+        }
+        if(provider == null){
+            provider        = locationManager.getBestProvider(new Criteria(), false);
         }
         locationManager.requestLocationUpdates(provider, 400, 1, this);
     }
@@ -268,7 +249,9 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
 
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
+        } catch(Exception ex) {
+            MainApplication.getInstance().trackException(ex);
+        }
 
 //        try {
 //            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
