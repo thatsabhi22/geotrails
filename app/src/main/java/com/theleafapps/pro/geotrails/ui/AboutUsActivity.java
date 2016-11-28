@@ -28,9 +28,9 @@ public class AboutUsActivity extends AppCompatActivity {
         View aboutPage = new AboutPage(this)
                 .isRTL(false)
                 .setImage(R.drawable.logo_medium)
-                .setDescription("\nGeoTrails\n\nThis is the very useful app for travellers, explorers, backpackers, surveyers, trekkers and what not !\n" +
+                .setDescription("\nGeoTrails\n\nThis is the very useful app for travellers, explorers, backpackers, surveyors, trekkers and what not !\n" +
                         "\n" +
-                        "Mark your location on the map and keep for your rememberance. \n" +
+                        "Mark your location on the map and keep for your remembrance. \n" +
                         "Select Multiple locations you have been to and get displayed on the map\n" +
                         "A Simple interface you can use the app very smoothly\n" +
                         "The map animations are simple cool\n\n" +
