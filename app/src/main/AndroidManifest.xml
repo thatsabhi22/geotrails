@@ -50,12 +50,12 @@
                 android:value="com.theleafapps.pro.geotrails.ui.AddDataActivity" />
         </activity>
         <activity android:name=".ui.LoadingActivity" />
-        <activity android:name=".ui.AboutUsActivity"></activity>
+        <activity android:name=".ui.AboutUsActivity" />
 
         <!--
         Optionally, register AnalyticsReceiver and AnalyticsService to support background
         dispatching on non-Google Play devices
-      -->
+        -->
         <receiver
             android:name="com.google.android.gms.analytics.AnalyticsReceiver"
             android:enabled="true">
@@ -82,6 +82,8 @@
         </receiver>
 
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+
+        <activity android:name=".ui.CreditsActivity"></activity>
     </application>
 
 </manifest>

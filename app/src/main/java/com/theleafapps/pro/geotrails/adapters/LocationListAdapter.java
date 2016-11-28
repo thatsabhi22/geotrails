@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.theleafapps.pro.geotrails.R;
@@ -27,7 +26,6 @@ import com.theleafapps.pro.geotrails.models.multiples.Marks;
 import com.theleafapps.pro.geotrails.tasks.UpdateMarkerIsStarTask;
 import com.theleafapps.pro.geotrails.ui.HomeActivity;
 import com.theleafapps.pro.geotrails.ui.LocationListActivity;
-import com.theleafapps.pro.geotrails.utils.Commons;
 import com.theleafapps.pro.geotrails.utils.DbHelper;
 import com.theleafapps.pro.geotrails.utils.MySingleton;
 

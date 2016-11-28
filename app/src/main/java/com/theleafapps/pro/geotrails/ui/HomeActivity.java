@@ -51,7 +51,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
     LocationManager locationManager;
     String provider;
     ImageView mark_location_button,list_button,logo_text;
-    TextView about_us_tv;
+    TextView about_us_tv,credits_tv;
     String multiMarker;
 
     @Override
@@ -66,11 +66,13 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         list_button          = (ImageView) findViewById(R.id.list_button);
         logo_text            = (ImageView) findViewById(R.id.logo_text);
         about_us_tv          = (TextView) findViewById(R.id.about_us);
+        credits_tv           = (TextView) findViewById(R.id.credits);
 
         mark_location_button.bringToFront();
         list_button.bringToFront();
         about_us_tv.bringToFront();
         logo_text.bringToFront();
+        credits_tv.bringToFront();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -108,6 +110,14 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 intent = new Intent(HomeActivity.this,AboutUsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        credits_tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent = new Intent(HomeActivity.this,CreditsActivity.class);
                 startActivity(intent);
             }
         });
