@@ -59,6 +59,9 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        Toast.makeText(this,"Get yourself in open to spot exact location.",Toast.LENGTH_LONG).show();
+        Toast.makeText(this,"It might take a few seconds to determine your correct location !!",Toast.LENGTH_LONG).show();
+
         intent               = getIntent();
         multiMarker          = intent.getStringExtra("multimarker");
 
