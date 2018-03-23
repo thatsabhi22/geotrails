@@ -22,12 +22,12 @@ import dfapi.BaseAsyncRequest;
 
 public class GetUserByFbIdTask extends BaseAsyncRequest {
 
-    Context context;
     public Users usersRec;
     public User userRec;
+    Context context;
     String fbId;
 
-    public GetUserByFbIdTask(Context context, String fbId){
+    public GetUserByFbIdTask(Context context, String fbId) {
         this.context = context;
         this.fbId = fbId;
     }
@@ -58,14 +58,14 @@ public class GetUserByFbIdTask extends BaseAsyncRequest {
     protected void processResponse(String response) throws ApiException, JSONException {
         usersRec =
                 (Users) ApiInvoker.deserialize(response, "", Users.class);
-        if(usersRec.userList.size()> 0)
+        if (usersRec.userList.size() > 0)
             userRec = usersRec.userList.get(0);
     }
 
     @Override
     protected void onCompletion(boolean success) {
-        if(success && usersRec != null){
-            Log.d("Tang Ho"," >>>>> Success");
+        if (success && usersRec != null) {
+            Log.d("Tang Ho", " >>>>> Success");
         }
     }
 

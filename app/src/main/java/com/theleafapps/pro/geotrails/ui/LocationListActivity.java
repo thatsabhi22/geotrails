@@ -34,9 +34,10 @@ import java.util.concurrent.ExecutionException;
 
 public class LocationListActivity extends AppCompatActivity {
 
+    public static String multiMarkerString;
     LocationListAdapter locationListAdapter;
     RecyclerView locationListRecyclerView;
-    double userLat,userLong;
+    double userLat, userLong;
     TextView no_location_tv;
     ImageView mark_now_button;
     Marks markers;
@@ -45,23 +46,22 @@ public class LocationListActivity extends AppCompatActivity {
     String caller;
     int u_id;
     SharedPreferences sp;
-    public static String multiMarkerString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_list);
 
-        Intent recIntent            =   getIntent();
-        userLat                     =   recIntent.getDoubleExtra("userLat",0);
-        userLong                    =   recIntent.getDoubleExtra("userLong",0);
-        caller                      =   recIntent.getStringExtra("caller");
+        Intent recIntent = getIntent();
+        userLat = recIntent.getDoubleExtra("userLat", 0);
+        userLong = recIntent.getDoubleExtra("userLong", 0);
+        caller = recIntent.getStringExtra("caller");
 
-        toolbar         =   (Toolbar) findViewById(R.id.toolbar_location_list);
-        no_location_tv  =   (TextView) findViewById(R.id.no_location_tv);
-        mark_now_button =   (ImageView) findViewById(R.id.mark_now_button);
-        sp              =   getSharedPreferences("g_t_data", Context.MODE_PRIVATE);
-        u_id            =   sp.getInt("u_id",0);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_location_list);
+        no_location_tv = (TextView) findViewById(R.id.no_location_tv);
+        mark_now_button = (ImageView) findViewById(R.id.mark_now_button);
+        sp = getSharedPreferences("g_t_data", Context.MODE_PRIVATE);
+        u_id = sp.getInt("u_id", 0);
         setSupportActionBar(toolbar);
 
         actionBar = getSupportActionBar();
@@ -69,15 +69,15 @@ public class LocationListActivity extends AppCompatActivity {
         actionBar.setIcon(R.drawable.logo_small);
         actionBar.setTitle("  GeoTrails");
 
-        if(u_id != 0)
-            markers     =   Commons.getAllMarkersWithId(DbHelper.get_all_markers,u_id);
+        if (u_id != 0)
+            markers = Commons.getAllMarkersWithId(DbHelper.get_all_markers, u_id);
 
         locationListRecyclerView
-                    =   (RecyclerView) findViewById(R.id.location_list_recycler_view);
+                = (RecyclerView) findViewById(R.id.location_list_recycler_view);
 
-        if(markers!=null && markers.markerList.size()>0){
+        if (markers != null && markers.markerList.size() > 0) {
             reloadLocationList();
-        }else{
+        } else {
             setEmptyLocationList();
         }
     }
@@ -90,7 +90,7 @@ public class LocationListActivity extends AppCompatActivity {
         mark_now_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LocationListActivity.this,HomeActivity.class);
+                Intent intent = new Intent(LocationListActivity.this, HomeActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
@@ -101,11 +101,11 @@ public class LocationListActivity extends AppCompatActivity {
         locationListRecyclerView.setVisibility(View.VISIBLE);
         no_location_tv.setVisibility(View.GONE);
         mark_now_button.setVisibility(View.GONE);
-        locationListAdapter  =  new LocationListAdapter(this,markers,multiMarkerString,getFragmentManager());
+        locationListAdapter = new LocationListAdapter(this, markers, multiMarkerString, getFragmentManager());
         locationListRecyclerView.setAdapter(locationListAdapter);
 
         final LinearLayoutManager linearLayoutManager
-                = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         locationListRecyclerView.setLayoutManager(linearLayoutManager);
     }
 
@@ -120,39 +120,39 @@ public class LocationListActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent;
-        if(TextUtils.equals(caller,"AddDataActivity")){
-            intent = new Intent(this,AddDataActivity.class);
-            intent.putExtra("userLat",userLat);
-            intent.putExtra("userLong",userLong);
-        }else {
-            intent = new Intent(this,HomeActivity.class);
+        if (TextUtils.equals(caller, "AddDataActivity")) {
+            intent = new Intent(this, AddDataActivity.class);
+            intent.putExtra("userLat", userLat);
+            intent.putExtra("userLong", userLong);
+        } else {
+            intent = new Intent(this, HomeActivity.class);
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
-    public Marks syncAllNewUnsyncedMarkers(){
+    public Marks syncAllNewUnsyncedMarkers() {
 
         List<Integer> ofl_loca_id_list = new ArrayList<>();
         Marks markers = null;
         try {
             markers = Commons.getAllMarkers(DbHelper.get_all_new_unsynced_marker);
-            for(Mark marker: markers.markerList){
+            for (Mark marker : markers.markerList) {
                 ofl_loca_id_list.add(marker.ofl_loca_id);
             }
             if (markers != null && markers.markerList.size() > 0) {
                 AddMarkerTask addMarkerTask = new AddMarkerTask(this, markers);
                 addMarkerTask.execute().get();
 
-                int i=0;
+                int i = 0;
                 Marks responseMarkers = addMarkerTask.markersObj;
 
                 List<Object> param = new ArrayList<>();
 
-                for(Mark mark:responseMarkers.markerList){
+                for (Mark mark : responseMarkers.markerList) {
                     param.add(String.valueOf(mark.loca_id));
                     param.add(String.valueOf(ofl_loca_id_list.get(i)));
-                    Commons.executeLocalQuery(this,DbHelper.update_all_new_unsync_markers,param);
+                    Commons.executeLocalQuery(this, DbHelper.update_all_new_unsync_markers, param);
                     i++;
                 }
             }
@@ -166,28 +166,28 @@ public class LocationListActivity extends AppCompatActivity {
         return markers;
     }
 
-    public Marks syncAllOldUnsyncedMarkers(){
+    public Marks syncAllOldUnsyncedMarkers() {
 
         List<Integer> ofl_loca_id_list = new ArrayList<>();
         Marks markers = null;
 
         try {
             markers = Commons.getAllMarkers(DbHelper.get_all_old_unsynced_marker);
-            for(Mark marker: markers.markerList){
+            for (Mark marker : markers.markerList) {
                 ofl_loca_id_list.add(marker.ofl_loca_id);
             }
             if (markers != null && markers.markerList.size() > 0) {
                 UpdateMarkerIsStarTask updateMarkerIsStarTask = new UpdateMarkerIsStarTask(this, markers);
                 updateMarkerIsStarTask.execute().get();
 
-                int i=0;
+                int i = 0;
                 Marks responseMarkers = updateMarkerIsStarTask.markers;
 
                 List<Object> param = new ArrayList<>();
 
-                for(Mark mark:responseMarkers.markerList){
+                for (Mark mark : responseMarkers.markerList) {
                     param.add(String.valueOf(ofl_loca_id_list.get(i)));
-                    Commons.executeLocalQuery(this,DbHelper.update_all_old_unsync_markers,param);
+                    Commons.executeLocalQuery(this, DbHelper.update_all_old_unsync_markers, param);
                     i++;
                 }
             }
@@ -208,7 +208,7 @@ public class LocationListActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.menu_map:
                     intent = new Intent(this, HomeActivity.class);
-                    intent.putExtra("multimarker",multiMarkerString);
+                    intent.putExtra("multimarker", multiMarkerString);
                     intent.putExtra("caller", "LocationListActivity");
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
@@ -216,18 +216,18 @@ public class LocationListActivity extends AppCompatActivity {
 
                 case R.id.sync:
 //                    Toast.makeText(this,"sync created",Toast.LENGTH_LONG).show();
-                    if(Commons.hasActiveInternetConnection(this)){
+                    if (Commons.hasActiveInternetConnection(this)) {
 
                         syncAllNewUnsyncedMarkers();
                         syncAllOldUnsyncedMarkers();
 
-                        intent = new Intent(this,LoadingActivity.class);
-                        intent.putExtra("goto","LocationListActivity");
-                        intent.putExtra("wait_time",2000);
+                        intent = new Intent(this, LoadingActivity.class);
+                        intent.putExtra("goto", "LocationListActivity");
+                        intent.putExtra("wait_time", 2000);
                         startActivity(intent);
 
-                    }else{
-                        Toast.makeText(this,"Please check your internet Connectivity",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Please check your internet Connectivity", Toast.LENGTH_SHORT).show();
                     }
                     break;
 
@@ -238,9 +238,9 @@ public class LocationListActivity extends AppCompatActivity {
                         Class callerClass = Class.forName(getPackageName() + ".ui." + caller);
                         intent = new Intent(this, callerClass);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        if(TextUtils.equals(caller,"AddDataActivity")){
-                            intent.putExtra("userLat",userLat);
-                            intent.putExtra("userLong",userLong);
+                        if (TextUtils.equals(caller, "AddDataActivity")) {
+                            intent.putExtra("userLat", userLat);
+                            intent.putExtra("userLong", userLong);
                         }
                         startActivity(intent);
                         finish();

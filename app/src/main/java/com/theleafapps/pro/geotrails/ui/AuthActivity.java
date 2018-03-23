@@ -7,9 +7,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -42,19 +42,19 @@ import java.util.concurrent.ExecutionException;
 
 public class AuthActivity extends AppCompatActivity {
 
+    Intent intent;
+    String TAG = "Tangho";
+    SharedPreferences sp;
+    SharedPreferences.Editor editor;
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
     private ImageButton skip_button;
     private DbHelper dbHelper;
-    Intent intent;
-    String TAG = "Tangho";
-    SharedPreferences sp;
-    SharedPreferences.Editor editor;
 
     @Override
     protected void onResume() {
-        Log.d("Tangho","AuthActivity : onResume Called ");
+        Log.d("Tangho", "AuthActivity : onResume Called ");
         super.onResume();
     }
 
@@ -67,94 +67,93 @@ public class AuthActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_auth);
 
-        loginButton =   (LoginButton)findViewById(R.id.login_button);
-        skip_button =   (ImageButton) findViewById(R.id.skip_button);
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        skip_button = (ImageButton) findViewById(R.id.skip_button);
 
         sp = getSharedPreferences("g_t_data", Context.MODE_PRIVATE);
 
         skip_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AuthActivity.this,HomeActivity.class);
+                Intent intent = new Intent(AuthActivity.this, HomeActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
 
-            loginButton.setReadPermissions(Arrays.asList("public_profile", "email","user_location"));
-            loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-                @Override
-                public void onSuccess(LoginResult loginResult) {
-                    loginResult.getAccessToken();
-                    GraphRequest request = GraphRequest.newMeRequest(
-                            loginResult.getAccessToken(),
-                            new GraphRequest.GraphJSONObjectCallback() {
-                                @Override
-                                public void onCompleted(JSONObject object, GraphResponse response) {
-                                    try {
-                                        Log.d(TAG, "GraphRequest onCompleted: " + object.get("email").toString());
-                                        addUser(object);
-                                    } catch (JSONException e) {
-                                        MainApplication.getInstance().trackException(e);
-                                        e.printStackTrace();
-                                    }
+        loginButton.setReadPermissions(Arrays.asList("public_profile", "email", "user_location"));
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                loginResult.getAccessToken();
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+                                try {
+                                    Log.d(TAG, "GraphRequest onCompleted: " + object.get("email").toString());
+                                    addUser(object);
+                                } catch (JSONException e) {
+                                    MainApplication.getInstance().trackException(e);
+                                    e.printStackTrace();
                                 }
-                            });
+                            }
+                        });
 
-                    Bundle parameters = new Bundle();
-                    parameters.putString("fields", "id,first_name,last_name,email,gender,location");
-                    request.setParameters(parameters);
-                    request.executeAsync();
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,first_name,last_name,email,gender,location");
+                request.setParameters(parameters);
+                request.executeAsync();
 
-                    accessTokenTracker = new AccessTokenTracker() {
-                        @Override
-                        protected void onCurrentAccessTokenChanged(
-                                AccessToken oldAccessToken,
-                                AccessToken currentAccessToken) {
-                            // Set the access token using
-                            // currentAccessToken when it's loaded or set.
-                        }
-                    };
-                    // If the access token is available already assign it.
-                    Commons.accessT = AccessToken.getCurrentAccessToken();
-
-                    if (Build.VERSION.SDK_INT > 22 && !Commons.hasPermissions(AuthActivity.this,Commons.requiredPermissions)) {
-                        Toast.makeText(AuthActivity.this, "Please grant all permissions", Toast.LENGTH_LONG).show();
-                        Commons.showPermissionDialog(AuthActivity.this);
+                accessTokenTracker = new AccessTokenTracker() {
+                    @Override
+                    protected void onCurrentAccessTokenChanged(
+                            AccessToken oldAccessToken,
+                            AccessToken currentAccessToken) {
+                        // Set the access token using
+                        // currentAccessToken when it's loaded or set.
                     }
-                    else{
-                        if (Commons.accessT != null) {
-                            //Toast.makeText(this, "access Token > " + Commons.accessT, Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(AuthActivity.this, HomeActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        }
+                };
+                // If the access token is available already assign it.
+                Commons.accessT = AccessToken.getCurrentAccessToken();
 
-                        intent      =   new Intent(AuthActivity.this,LoadingActivity.class);
-                        intent.putExtra("wait_time",3000);
-                        intent.putExtra("goto","HomeActivity");
+                if (Build.VERSION.SDK_INT > 22 && !Commons.hasPermissions(AuthActivity.this, Commons.requiredPermissions)) {
+                    Toast.makeText(AuthActivity.this, "Please grant all permissions", Toast.LENGTH_LONG).show();
+                    Commons.showPermissionDialog(AuthActivity.this);
+                } else {
+                    if (Commons.accessT != null) {
+                        //Toast.makeText(this, "access Token > " + Commons.accessT, Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(AuthActivity.this, HomeActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
-                }
 
-                @Override
-                public void onCancel() {
+                    intent = new Intent(AuthActivity.this, LoadingActivity.class);
+                    intent.putExtra("wait_time", 3000);
+                    intent.putExtra("goto", "HomeActivity");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onCancel() {
 //                info.setText("Login attempt canceled.");
-                }
+            }
 
-                @Override
-                public void onError(FacebookException error) {
-                    Toast.makeText(AuthActivity.this,"Could not login to facebook. Please check your Internet Connectivity.",Toast.LENGTH_LONG).show();
+            @Override
+            public void onError(FacebookException error) {
+                Toast.makeText(AuthActivity.this, "Could not login to facebook. Please check your Internet Connectivity.", Toast.LENGTH_LONG).show();
 //                  info.setText("Login attempt failed.");
-                }
-            });
+            }
+        });
 
         Commons.accessT = AccessToken.getCurrentAccessToken();
-        if (Build.VERSION.SDK_INT > 22 && !Commons.hasPermissions(AuthActivity.this,Commons.requiredPermissions)) {
+        if (Build.VERSION.SDK_INT > 22 && !Commons.hasPermissions(AuthActivity.this, Commons.requiredPermissions)) {
             Toast.makeText(AuthActivity.this, "Please grant all permissions", Toast.LENGTH_LONG).show();
             Commons.showPermissionDialog(AuthActivity.this);
-        }else{
+        } else {
             if (Commons.accessT != null) {
                 //Toast.makeText(this, "access Token > " + Commons.accessT, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(AuthActivity.this, HomeActivity.class);
@@ -165,65 +164,65 @@ public class AuthActivity extends AppCompatActivity {
     }
 
 
-
     private void addUser(JSONObject object) {
         String dev_id = Settings.Secure.getString(this.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         try {
             int user_id;
             SQLiteStatement stmt;
-            dbHelper             =   new DbHelper(this);
-            SQLiteDatabase db    =   dbHelper.getWritableDatabase();
+            dbHelper = new DbHelper(this);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-            String first_name    =   object.get("first_name").toString();
-            String last_name     =   object.get("last_name").toString();
-            String gender        =   object.get("gender").toString();
-            String email         =   object.get("email").toString();
-            String location      =   "";
-            if(object.has("location")){
+            String first_name = object.get("first_name").toString();
+            String last_name = object.get("last_name").toString();
+            String gender = object.get("gender").toString();
+            String email = object.get("email").toString();
+            String location = "";
+            if (object.has("location")) {
                 JSONObject locationObj
-                                 =  (JSONObject) object.get("location");
-                location         =  locationObj.get("name").toString();}
-            String fb_id         =   object.get("id").toString();
+                        = (JSONObject) object.get("location");
+                location = locationObj.get("name").toString();
+            }
+            String fb_id = object.get("id").toString();
 
 //#######################################################################
 //################ Insert record on cloud ###############################
 
-            GetUserByFbIdTask getUserByFbIdTask = new GetUserByFbIdTask(this,fb_id);
+            GetUserByFbIdTask getUserByFbIdTask = new GetUserByFbIdTask(this, fb_id);
             getUserByFbIdTask.execute().get();
 
             int userRec;
 
-            if(getUserByFbIdTask.userRec == null){
+            if (getUserByFbIdTask.userRec == null) {
 
-                Users users           =   new Users();
-                User user             =   new User();
-                user.user_dev_id      =   dev_id;
-                user.current_location =   location;
-                user.email            =   email;
-                user.first_name       =   first_name;
-                user.last_name        =   last_name;
-                user.gender           =   gender;
-                user.fb_id            =   fb_id;
+                Users users = new Users();
+                User user = new User();
+                user.user_dev_id = dev_id;
+                user.current_location = location;
+                user.email = email;
+                user.first_name = first_name;
+                user.last_name = last_name;
+                user.gender = gender;
+                user.fb_id = fb_id;
 
                 users.userList.add(user);
-                AddUserTask addUserTask = new AddUserTask(this,users);
+                AddUserTask addUserTask = new AddUserTask(this, users);
                 addUserTask.execute().get();
                 userRec = addUserTask.userId;
 
-            }else{
-                userRec               =   getUserByFbIdTask.userRec.user_id;
+            } else {
+                userRec = getUserByFbIdTask.userRec.user_id;
             }
 
 //######################################################################
 
-            Cursor c            =   db.rawQuery(DbHelper.get_usr_by_fb_id_st, new String[]{fb_id});
-            int count           =   c.getCount();
+            Cursor c = db.rawQuery(DbHelper.get_usr_by_fb_id_st, new String[]{fb_id});
+            int count = c.getCount();
 
-            if(count > 0){
-                stmt            =   db.compileStatement(DbHelper.update_usr_st);
-            }else{
-                stmt            =   db.compileStatement(DbHelper.insert_usr_st);
+            if (count > 0) {
+                stmt = db.compileStatement(DbHelper.update_usr_st);
+            } else {
+                stmt = db.compileStatement(DbHelper.insert_usr_st);
             }
             stmt.bindString(1, dev_id);
             stmt.bindString(2, String.valueOf(userRec));
@@ -238,10 +237,10 @@ public class AuthActivity extends AppCompatActivity {
             c.close();
 
             editor = sp.edit();
-            editor.putInt("u_id",userRec);
+            editor.putInt("u_id", userRec);
             editor.commit();
 
-        }catch (JSONException e) {
+        } catch (JSONException e) {
             MainApplication.getInstance().trackException(e);
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -257,7 +256,7 @@ public class AuthActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Commons.REQUEST_APP_SETTINGS) {
-            if (Commons.hasPermissions(this,Commons.requiredPermissions)) {
+            if (Commons.hasPermissions(this, Commons.requiredPermissions)) {
                 Toast.makeText(this, "All permissions granted!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Permissions not granted.", Toast.LENGTH_LONG).show();

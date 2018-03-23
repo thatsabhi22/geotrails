@@ -16,13 +16,13 @@ import dfapi.BaseAsyncRequest;
  */
 public class AddUserTask extends BaseAsyncRequest {
 
-    Context context;
     public int userId;
+    Context context;
     Users usersObj;
 
-    public AddUserTask(Context context, Users users){
-        this.context       =   context;
-        this.usersObj      =   users;
+    public AddUserTask(Context context, Users users) {
+        this.context = context;
+        this.usersObj = users;
     }
 
     @Override
@@ -33,8 +33,8 @@ public class AddUserTask extends BaseAsyncRequest {
 
         verb = "POST";
 
-        requestString = ApiInvoker.serialize(usersObj).replace("\"user_id\":0,","");
-        requestString = requestString.replace(",\"user_id\":0","");
+        requestString = ApiInvoker.serialize(usersObj).replace("\"user_id\":0,", "");
+        requestString = requestString.replace(",\"user_id\":0", "");
 
         applicationApiKey = AppConstants.API_KEY;
         sessionToken = PrefUtil.getString(context, AppConstants.SESSION_TOKEN);
@@ -43,14 +43,14 @@ public class AddUserTask extends BaseAsyncRequest {
     @Override
     protected void processResponse(String response) throws ApiException, org.json.JSONException {
         // response has whole contact record, but we just want the id
-        Users usersObj  =   (Users) ApiInvoker.deserialize(response, "", Users.class);
-        userId          =   usersObj.userList.get(0).user_id;
+        Users usersObj = (Users) ApiInvoker.deserialize(response, "", Users.class);
+        userId = usersObj.userList.get(0).user_id;
     }
 
     @Override
     protected void onCompletion(boolean success) {
-        if(success) {
-            Log.d("Tang Ho","Success");
+        if (success) {
+            Log.d("Tang Ho", "Success");
         }
     }
 }

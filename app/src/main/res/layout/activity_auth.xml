@@ -10,40 +10,40 @@
         android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_below="@+id/imageView"
         android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="80dp" />
 
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:src="@drawable/logotext_dark"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="101dp" />
+        android:layout_marginTop="101dp"
+        android:src="@drawable/logotext_dark" />
 
     <ImageButton
+        android:id="@+id/skip_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/skip_button"
-        android:background="@drawable/skip_button"
-        android:layout_marginTop="30dp"
         android:layout_below="@+id/login_button"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/skip_button" />
 
     <TextView
-        android:text="No worries\n We do not post anything on your wall."
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
-        android:textSize="15sp"
-        android:textStyle="normal"
-        android:gravity="center_horizontal"
-        android:textColor="@color/Red"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="66dp"
-        android:id="@+id/textView" />
+        android:gravity="center_horizontal"
+        android:text="No worries\n We do not post anything on your wall."
+        android:textColor="@color/Red"
+        android:textSize="15sp"
+        android:textStyle="normal" />
 
 </RelativeLayout>

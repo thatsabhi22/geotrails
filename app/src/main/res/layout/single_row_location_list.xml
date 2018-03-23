@@ -1,116 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/location_list_card_view"
-    android:foreground="?android:attr/selectableItemBackground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="2dp"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
-    card_view:cardUseCompatPadding="true"
+    android:foreground="?android:attr/selectableItemBackground"
     card_view:cardCornerRadius="0dp"
-    android:layout_marginBottom="2dp">
+    card_view:cardUseCompatPadding="true">
 
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:paddingBottom="15dp">
 
         <eu.davidea.flipview.FlipView
             android:id="@+id/locationFlipView"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginRight="16dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginEnd="16dp"
             android:layout_marginLeft="13dp"
+            android:layout_marginRight="16dp"
             android:layout_marginStart="13dp"
             android:layout_marginTop="15dp"
-            android:layout_gravity="center_horizontal"
-            android:padding="4dp"
-            android:clipToPadding="false"
             android:clickable="true"
+            android:clipToPadding="false"
+            android:padding="4dp"
             app:checked="false"
             app:enableInitialAnimation="true"
-            card_view:frontBackground="@color/blue_grey_50"
-            app:frontLayout="@layout/flipview_front_custom"
             app:frontImage="@drawable/noimageflag"
+            app:frontLayout="@layout/flipview_front_custom"
+            app:rearImageAnimationDelay="0"
             app:rearLayout="@layout/flipview_rear_custom"
-            app:rearImageAnimationDelay="0"/>
+            card_view:frontBackground="@color/blue_grey_50" />
 
         <!--<ImageView-->
-            <!--android:layout_width="54dp"-->
-            <!--android:layout_height="54dp"-->
-            <!--android:src="@drawable/noimageflag"-->
-            <!--android:id="@+id/locationImageView"-->
-            <!--android:layout_marginLeft="10dp"-->
-            <!--android:layout_marginTop="15dp"-->
-            <!--android:layout_marginRight="10dp" />-->
+        <!--android:layout_width="54dp"-->
+        <!--android:layout_height="54dp"-->
+        <!--android:src="@drawable/noimageflag"-->
+        <!--android:id="@+id/locationImageView"-->
+        <!--android:layout_marginLeft="10dp"-->
+        <!--android:layout_marginTop="15dp"-->
+        <!--android:layout_marginRight="10dp" />-->
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="&lt;location_title&gt;"
             android:id="@+id/location_title_tv"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:maxLength="15"
-            android:layout_alignTop="@+id/locationFlipView"
-            android:layout_toRightOf="@+id/locationFlipView"
-            android:layout_toEndOf="@+id/locationFlipView" />
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="&lt;location_user_add&gt;"
+            android:layout_alignTop="@+id/locationFlipView"
+            android:layout_toEndOf="@+id/locationFlipView"
+            android:layout_toRightOf="@+id/locationFlipView"
             android:ellipsize="end"
+            android:maxLength="15"
             android:singleLine="true"
-            android:maxLength="20"
+            android:text="&lt;location_title&gt;"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
             android:id="@+id/location_user_add_tv"
-            android:layout_below="@+id/location_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/location_title_tv"
             android:layout_alignStart="@+id/location_title_tv"
-            android:layout_marginTop="2dp" />
+            android:layout_below="@+id/location_title_tv"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLength="20"
+            android:singleLine="true"
+            android:text="&lt;location_user_add&gt;"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:maxLength="20"
-            android:text="&lt;location_user_desc&gt;"
             android:id="@+id/location_user_desc_tv"
-            android:layout_below="@+id/location_user_add_tv"
-            android:layout_toRightOf="@+id/locationFlipView"
-            android:layout_toEndOf="@+id/locationFlipView"
-            android:layout_marginTop="2dp" />
-
-        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/fav_image_view"
-            android:layout_marginRight="23dp"
-            android:layout_marginEnd="23dp"
-            android:src="@drawable/heart_empty_28"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_below="@+id/location_user_add_tv"
+            android:layout_marginTop="2dp"
+            android:layout_toEndOf="@+id/locationFlipView"
+            android:layout_toRightOf="@+id/locationFlipView"
+            android:ellipsize="end"
+            android:maxLength="20"
+            android:singleLine="true"
+            android:text="&lt;location_user_desc&gt;"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <ImageView
+            android:id="@+id/fav_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="23dp"
+            android:layout_marginRight="23dp"
+            android:src="@drawable/heart_empty_28" />
+
+        <ImageView
+            android:id="@+id/sync_indicator"
             android:layout_width="75dp"
             android:layout_height="2dp"
-            android:id="@+id/sync_indicator"
-            android:background="@color/about_github_color"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="false"
             android:layout_alignParentEnd="false"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentRight="false"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@color/about_github_color" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

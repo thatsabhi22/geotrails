@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.AddDataActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/add_data_screen_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:id="@+id/add_data_screen_toolbar">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_add_data"
@@ -22,13 +22,14 @@
     </android.support.design.widget.AppBarLayout>
 
     <ScrollView
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@+id/add_data_screen_toolbar">
+
         <RelativeLayout
+            android:id="@+id/innerRelativeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/innerRelativeLayout"
             android:descendantFocusability="beforeDescendants"
             android:focusableInTouchMode="true"
             android:padding="10dp">
@@ -39,93 +40,93 @@
                 android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="280dp"
                 android:layout_height="120dp"
-                tools:context=".ui.AddDataActivity"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp" />
+                android:layout_marginTop="5dp"
+                tools:context=".ui.AddDataActivity" />
 
             <TextView
+                android:id="@+id/reverse_geo_add_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="&lt;Reverse GC>"
-                android:id="@+id/reverse_geo_add_tv"
                 android:layout_below="@+id/addDataSmallMap"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="15dp"
+                android:gravity="center_horizontal"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:gravity="center_horizontal" />
+                android:text="&lt;Reverse GC>"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <EditText
+                android:id="@+id/location_title_et"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/location_title_et"
                 android:layout_below="@+id/reverse_geo_add_tv"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="15dp"
-                android:minWidth="300dp"
-                android:maxLines="1"
-                android:hint="Title "
-                android:nextFocusDown="@+id/location_user_address_et"
                 android:gravity="center_horizontal"
-                android:singleLine="true"
+                android:hint="Title "
+                android:inputType="textFilter"
                 android:maxLength="60"
-                android:inputType="textFilter" />
+                android:maxLines="1"
+                android:minWidth="300dp"
+                android:nextFocusDown="@+id/location_user_address_et"
+                android:singleLine="true" />
 
             <EditText
+                android:id="@+id/location_user_address_et"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:nextFocusDown="@+id/location_desc_et"
-                android:ems="10"
-                android:id="@+id/location_user_address_et"
-                android:hint="Put Address Here"
                 android:layout_alignParentTop="false"
+                android:layout_below="@+id/location_title_et"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="15dp"
-                android:layout_below="@+id/location_title_et"
+                android:ems="10"
                 android:gravity="center_horizontal"
-                android:maxLines="2"
+                android:hint="Put Address Here"
+                android:inputType="textFilter|textMultiLine"
                 android:maxLength="250"
+                android:maxLines="2"
                 android:minWidth="300dp"
-                android:inputType="textFilter|textMultiLine" />
+                android:nextFocusDown="@+id/location_desc_et" />
 
             <EditText
+                android:id="@+id/location_desc_et"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="textFilter|textMultiLine"
-                android:ems="10"
-                android:id="@+id/location_desc_et"
                 android:layout_below="@+id/location_user_address_et"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="15dp"
-                android:nextFocusDown="@+id/mark_button"
-                android:hint="Write something about this place"
+                android:ems="10"
                 android:gravity="center_horizontal"
-                android:maxLines="3"
+                android:hint="Write something about this place"
+                android:inputType="textFilter|textMultiLine"
                 android:maxLength="300"
-                android:minWidth="300dp" />
+                android:maxLines="3"
+                android:minWidth="300dp"
+                android:nextFocusDown="@+id/mark_button" />
 
             <ImageButton
+                android:id="@+id/mark_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/mark_button"
-                android:src="@drawable/save_button"
-                android:background="@color/windowBackground"
                 android:layout_alignParentBottom="false"
+                android:layout_below="@+id/location_desc_et"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="60dp"
-                android:layout_below="@+id/location_desc_et" />
+                android:background="@color/windowBackground"
+                android:src="@drawable/save_button" />
 
             <TextView
-                android:text="empty"
+                android:id="@+id/loca_id_hid_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/loca_id_hid_tv"
-                android:layout_marginTop="15dp"
-                android:visibility="gone"
                 android:layout_below="@+id/location_desc_et"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:text="empty"
+                android:visibility="gone" />
 
             <!--
             <TextView

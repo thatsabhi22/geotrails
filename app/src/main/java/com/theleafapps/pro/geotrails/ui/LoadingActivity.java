@@ -1,9 +1,9 @@
 package com.theleafapps.pro.geotrails.ui;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 
 import com.theleafapps.pro.geotrails.R;
@@ -14,18 +14,18 @@ public class LoadingActivity extends AppCompatActivity {
     //Introduce a delay
     int wait_time;
     Class callerClass;
-    private Handler uiHandler;
     Intent intent;
+    private Handler uiHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            intent              =   getIntent();
-            String gotoActivity =   intent.getStringExtra("goto");
-            wait_time           =   intent.getIntExtra("wait_time",1000);
-            callerClass         =   Class.forName(getPackageName() + ".ui." + gotoActivity);
-            uiHandler           =   new Handler(); // anything posted to this handler will run on the UI Thread
+            intent = getIntent();
+            String gotoActivity = intent.getStringExtra("goto");
+            wait_time = intent.getIntExtra("wait_time", 1000);
+            callerClass = Class.forName(getPackageName() + ".ui." + gotoActivity);
+            uiHandler = new Handler(); // anything posted to this handler will run on the UI Thread
             System.out.println("LoadingScreenActivity  screen started");
             setContentView(R.layout.activity_loading);
             findViewById(R.id.mainSpinner).setVisibility(View.VISIBLE);
@@ -60,7 +60,7 @@ public class LoadingActivity extends AppCompatActivity {
                 }
             };
             new Thread(background).start();
-        }catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             MainApplication.getInstance().trackException(e);
             e.printStackTrace();
         }

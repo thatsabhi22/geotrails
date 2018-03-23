@@ -33,26 +33,21 @@ import java.util.List;
  */
 public class Commons {
 
-    public static int user_id;
-
-    public static AccessToken accessT;
-
-    private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
     public static final int REQUEST_APP_SETTINGS = 168;
-
-    final static int  MY_PERMISSIONS_REQUEST_LOCATION = 1;
-
     public static final String[] requiredPermissions = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
             /* ETC.. */
     };
+    final static int MY_PERMISSIONS_REQUEST_LOCATION = 1;
+    private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    public static int user_id;
+    public static AccessToken accessT;
 
-    public static boolean hasPermissions(Context context,@NonNull String... permissions) {
+    public static boolean hasPermissions(Context context, @NonNull String... permissions) {
         for (String permission : permissions)
-            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(context,permission))
+            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(context, permission))
                 return false;
         return true;
     }
@@ -60,7 +55,7 @@ public class Commons {
     public static String randomAlphaNumeric(int count) {
         StringBuilder builder = new StringBuilder();
         while (count-- != 0) {
-            int character = (int)(Math.random()*ALPHA_NUMERIC_STRING.length());
+            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
             builder.append(ALPHA_NUMERIC_STRING.charAt(character));
         }
         return builder.toString();
@@ -81,8 +76,7 @@ public class Commons {
                 "The App may not function well otherwise.");
         builder.setTitle("GeoTrails");
         builder.setPositiveButton("App Settings", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(DialogInterface dialog, int which) {
 //                dialog.dismiss();
                 goToSettings(activity);
             }
@@ -98,8 +92,7 @@ public class Commons {
                 "The App may not function well otherwise.");
         builder.setTitle("GeoTrails");
         builder.setPositiveButton("App Settings", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 goToSettings(activity);
             }
@@ -111,14 +104,13 @@ public class Commons {
     public static boolean hasActiveInternetConnection(Context context) {
 
         ConnectivityManager cm =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
 
-        if (android.os.Build.VERSION.SDK_INT > 9)
-        {
+        if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
@@ -151,7 +143,7 @@ public class Commons {
         return markers;
     }
 
-    public static Marks getAllMarkersWithId(String query,int user_id) {
+    public static Marks getAllMarkersWithId(String query, int user_id) {
 
         Marks markers = new Marks();
         Cursor c = DbHelper.GtrailsDB.rawQuery(query, new String[]{String.valueOf(user_id)});
@@ -161,14 +153,14 @@ public class Commons {
         return markers;
     }
 
-    public static void executeLocalQuery(Context context,String query,List<Object> params){
+    public static void executeLocalQuery(Context context, String query, List<Object> params) {
 
-        int i=1;
-        DbHelper dbHelper       =   new DbHelper(context);
-        SQLiteDatabase db       =   dbHelper.getWritableDatabase();
-        SQLiteStatement stmt    =   db.compileStatement(query);
+        int i = 1;
+        DbHelper dbHelper = new DbHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        SQLiteStatement stmt = db.compileStatement(query);
 
-        for(Object param:params){
+        for (Object param : params) {
             stmt.bindString(i, String.valueOf(param));
             i++;
         }
@@ -178,51 +170,51 @@ public class Commons {
     }
 
     private static void populateMarkers(Marks markers, Cursor c) {
-        int locIdIndex      = c.getColumnIndex("loca_id");
-        int oflLocIdIndex   = c.getColumnIndex("ofl_loca_id");
-        int userLatIndex    = c.getColumnIndex("user_lat");
-        int userLongIndex   = c.getColumnIndex("user_long");
-        int userIdIndex     = c.getColumnIndex("user_id");
-        int userAddIndex    = c.getColumnIndex("user_add");
-        int locTitleIndex   = c.getColumnIndex("loca_title");
-        int locaDescIndex   = c.getColumnIndex("loca_desc");
+        int locIdIndex = c.getColumnIndex("loca_id");
+        int oflLocIdIndex = c.getColumnIndex("ofl_loca_id");
+        int userLatIndex = c.getColumnIndex("user_lat");
+        int userLongIndex = c.getColumnIndex("user_long");
+        int userIdIndex = c.getColumnIndex("user_id");
+        int userAddIndex = c.getColumnIndex("user_add");
+        int locTitleIndex = c.getColumnIndex("loca_title");
+        int locaDescIndex = c.getColumnIndex("loca_desc");
         int geocodeAddIndex = c.getColumnIndex("geocode_add");
-        int isStarIndex     = c.getColumnIndex("is_star");
-        int isSyncIndex     = c.getColumnIndex("is_sync");
-        int isDeletedIndex  = c.getColumnIndex("is_deleted");
-        int c_on            = c.getColumnIndex("created_on");
-        int m_on            = c.getColumnIndex("modified_on");
+        int isStarIndex = c.getColumnIndex("is_star");
+        int isSyncIndex = c.getColumnIndex("is_sync");
+        int isDeletedIndex = c.getColumnIndex("is_deleted");
+        int c_on = c.getColumnIndex("created_on");
+        int m_on = c.getColumnIndex("modified_on");
 
 
-        if(c != null && c.getCount()!=0){
+        if (c != null && c.getCount() != 0) {
             c.moveToFirst();
-            do{
+            do {
 
-                Mark marker         =   new Mark();
-                marker.loca_id      =   c.getInt(locIdIndex);
-                marker.ofl_loca_id  =   c.getInt(oflLocIdIndex);
-                marker.user_lat     =   c.getDouble(userLatIndex);
-                marker.user_long    =   c.getDouble(userLongIndex);
-                marker.user_id      =   c.getInt(userIdIndex);
-                marker.user_add     =   c.getString(userAddIndex);
-                marker.loca_title   =   c.getString(locTitleIndex);
-                marker.loca_desc    =   c.getString(locaDescIndex);
-                marker.geo_code_add =   c.getString(geocodeAddIndex);
-                marker.is_star      =   c.getInt(isStarIndex) == 1 ? "true" : "false";
-                marker.is_sync      =   c.getInt(isSyncIndex);
-                marker.is_deleted   =   c.getInt(isDeletedIndex);
-                marker.created_on   =   c.getString(c_on);
-                marker.modified_on  =   c.getString(m_on);
+                Mark marker = new Mark();
+                marker.loca_id = c.getInt(locIdIndex);
+                marker.ofl_loca_id = c.getInt(oflLocIdIndex);
+                marker.user_lat = c.getDouble(userLatIndex);
+                marker.user_long = c.getDouble(userLongIndex);
+                marker.user_id = c.getInt(userIdIndex);
+                marker.user_add = c.getString(userAddIndex);
+                marker.loca_title = c.getString(locTitleIndex);
+                marker.loca_desc = c.getString(locaDescIndex);
+                marker.geo_code_add = c.getString(geocodeAddIndex);
+                marker.is_star = c.getInt(isStarIndex) == 1 ? "true" : "false";
+                marker.is_sync = c.getInt(isSyncIndex);
+                marker.is_deleted = c.getInt(isDeletedIndex);
+                marker.created_on = c.getString(c_on);
+                marker.modified_on = c.getString(m_on);
 
                 markers.markerList.add(marker);
-            }while(c.moveToNext());
+            } while (c.moveToNext());
         }
     }
 
-    public static Marks getAllMarkersWithIds(String multiMarkerString){
+    public static Marks getAllMarkersWithIds(String multiMarkerString) {
         String query = "";
-        if(multiMarkerString.matches("^\\d+(,\\d+)*$")) {
-            query = DbHelper.get_all_markers_with_ids.replace("?",multiMarkerString);
+        if (multiMarkerString.matches("^\\d+(,\\d+)*$")) {
+            query = DbHelper.get_all_markers_with_ids.replace("?", multiMarkerString);
         }
         return Commons.getAllMarkers(query);
     }

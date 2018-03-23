@@ -1,9 +1,9 @@
 package com.theleafapps.pro.geotrails.ui;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -37,7 +37,7 @@ public class AboutUsActivity extends AppCompatActivity {
                         "Upcoming features :\n" +
                         "Share on Facebook, Twitter, Instagram and much more\n" +
                         "Take photographs of the places you have marked on the map and Watch anytime\n"
-                        )
+                )
                 .addItem(new Element().setTitle("Version 1.0"))
                 .addGroup("Connect with us")
                 .addEmail("getintouch@theleafapps.com")
@@ -71,26 +71,26 @@ public class AboutUsActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d("Tangho","AboutUs activity >> onRestart Called");
+        Log.d("Tangho", "AboutUs activity >> onRestart Called");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         finish();
-        Log.d("Tangho","AboutUs activity >> onPause Called");
+        Log.d("Tangho", "AboutUs activity >> onPause Called");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("Tangho","AboutUs activity >> onDestroy Called");
+        Log.d("Tangho", "AboutUs activity >> onDestroy Called");
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Log.d("Tangho","AboutUs activity >> onBackPressed Called");
-        Intent intent = new Intent(this,HomeActivity.class);
+        Log.d("Tangho", "AboutUs activity >> onBackPressed Called");
+        Intent intent = new Intent(this, HomeActivity.class);
     }
 }

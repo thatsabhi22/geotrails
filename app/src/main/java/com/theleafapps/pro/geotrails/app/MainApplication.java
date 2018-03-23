@@ -14,12 +14,16 @@ import com.theleafapps.pro.geotrails.utils.AnalyticsTrackers;
  * Created by aviator on 25/11/16.
  */
 
-public class MainApplication  extends Application {
+public class MainApplication extends Application {
 
     public static final String TAG = MainApplication.class
             .getSimpleName();
 
     private static MainApplication mInstance;
+
+    public static synchronized MainApplication getInstance() {
+        return mInstance;
+    }
 
     @Override
     public void onCreate() {
@@ -33,10 +37,6 @@ public class MainApplication  extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
-    }
-
-    public static synchronized MainApplication getInstance() {
-        return mInstance;
     }
 
     public synchronized Tracker getGoogleAnalyticsTracker() {

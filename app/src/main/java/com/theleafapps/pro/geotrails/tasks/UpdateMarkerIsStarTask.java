@@ -17,13 +17,13 @@ import dfapi.BaseAsyncRequest;
 
 public class UpdateMarkerIsStarTask extends BaseAsyncRequest {
 
-    Context context;
     public int locaId;
     public Marks markers;
+    Context context;
 
-    public UpdateMarkerIsStarTask(Context context, Marks markers){
-        this.context      =   context;
-        this.markers      =   markers;
+    public UpdateMarkerIsStarTask(Context context, Marks markers) {
+        this.context = context;
+        this.markers = markers;
     }
 
     @Override
@@ -43,14 +43,14 @@ public class UpdateMarkerIsStarTask extends BaseAsyncRequest {
 
     @Override
     protected void processResponse(String response) throws ApiException, org.json.JSONException {
-        markers   =   (Marks) ApiInvoker.deserialize(response, "", Marks.class);
-        locaId          =   markers.markerList.get(0).loca_id;
+        markers = (Marks) ApiInvoker.deserialize(response, "", Marks.class);
+        locaId = markers.markerList.get(0).loca_id;
     }
 
     @Override
     protected void onCompletion(boolean success) {
-        if(success) {
-            Log.d("Tang Ho","Success");
+        if (success) {
+            Log.d("Tang Ho", "Success");
         }
     }
 }

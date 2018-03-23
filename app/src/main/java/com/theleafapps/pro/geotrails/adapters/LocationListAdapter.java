@@ -39,7 +39,7 @@ import eu.davidea.flipview.FlipView;
  * Created by aviator on 29/08/16.
  */
 public class LocationListAdapter extends
-        RecyclerView.Adapter<LocationListAdapter.MyViewHolder> implements View.OnClickListener{
+        RecyclerView.Adapter<LocationListAdapter.MyViewHolder> implements View.OnClickListener {
 
     DbHelper dbHelper;
     Context mContext;
@@ -51,18 +51,18 @@ public class LocationListAdapter extends
     Set<String> multiMarkerList;
     FragmentManager fragmentManager;
 
-    public LocationListAdapter(Context context, Marks markers, String multiMarker, FragmentManager fragmentManager){
-        inflater                =   LayoutInflater.from(context);
-        this.mContext           =   context;
-        this.markers            =   markers;
-        this.multiMarker        =   multiMarker;
-        multiMarkerList         =   new LinkedHashSet<>();
-        this.fragmentManager    =   fragmentManager;
+    public LocationListAdapter(Context context, Marks markers, String multiMarker, FragmentManager fragmentManager) {
+        inflater = LayoutInflater.from(context);
+        this.mContext = context;
+        this.markers = markers;
+        this.multiMarker = multiMarker;
+        multiMarkerList = new LinkedHashSet<>();
+        this.fragmentManager = fragmentManager;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view =  inflater.inflate(R.layout.single_row_location_list,parent,false);
+        View view = inflater.inflate(R.layout.single_row_location_list, parent, false);
         MyViewHolder myViewHolder = new MyViewHolder(view);
         return myViewHolder;
     }
@@ -96,15 +96,15 @@ public class LocationListAdapter extends
         holder.location_user_add_tv.setText(current.user_add);
         holder.location_user_desc_tv.setText(current.loca_desc);
 
-        if(TextUtils.equals(current.is_star,"false")){
+        if (TextUtils.equals(current.is_star, "false")) {
             holder.fav_image_view.setImageResource(R.drawable.heart_empty_28);
-        }else{
+        } else {
             holder.fav_image_view.setImageResource(R.drawable.heart_fill_28);
         }
 
-        if(current.is_sync == 1){
+        if (current.is_sync == 1) {
             holder.sync_image_view.setBackgroundColor(Color.parseColor("#388E3C"));
-        }else{
+        } else {
             holder.sync_image_view.setBackgroundColor(Color.RED);
         }
 
@@ -113,7 +113,7 @@ public class LocationListAdapter extends
 
     @Override
     public int getItemCount() {
-        if(markers!=null && markers.markerList.size() != 0) {
+        if (markers != null && markers.markerList.size() != 0) {
             return markers.markerList.size();
         }
         return 0;
@@ -124,113 +124,21 @@ public class LocationListAdapter extends
 
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
-
-        FlipView locationFlipView;
-        TextView location_title_tv,location_user_add_tv,location_user_desc_tv;
-        ImageView fav_image_view,sync_image_view;
-
-        public MyViewHolder(View itemView) {
-            super(itemView);
-
-            locationFlipView        = (FlipView) itemView.findViewById(R.id.locationFlipView);
-            location_title_tv       = (TextView) itemView.findViewById(R.id.location_title_tv);
-            location_user_add_tv    = (TextView) itemView.findViewById(R.id.location_user_add_tv);
-            location_user_desc_tv   = (TextView) itemView.findViewById(R.id.location_user_desc_tv);
-            fav_image_view          = (ImageView) itemView.findViewById(R.id.fav_image_view);
-            sync_image_view         = (ImageView) itemView.findViewById(R.id.sync_indicator);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    //###################################################
-                    String ofl_loca_id = getOflLocaIdByCardPosition(view);
-
-                    Intent intent = new Intent(mContext, HomeActivity.class);
-
-                    intent.putExtra("multimarker",ofl_loca_id);
-                    intent.putExtra("caller", "LocationListActivity");
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    mContext.startActivity(intent);
-//                    Toast.makeText(mContext,"card clicked",Toast.LENGTH_SHORT).show();
-                    //###################################################
-
-                }
-            });
-
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-//                    Toast.makeText(mContext,"card clicked long",Toast.LENGTH_SHORT).show();
-                    String ofl_loca_id     =   getOflLocaIdByCardPosition(view);
-                    Bundle bundle          =   new Bundle();
-                    bundle.putString("ofl_loca_id",ofl_loca_id);
-                    MarkerActionDialog ldc = new MarkerActionDialog();
-                    ldc.setArguments(bundle);
-                    ldc.show(fragmentManager, "securityQuestionDialog");
-                    return false;
-                }
-            });
-
-            locationFlipView.setOnFlippingListener(new FlipView.OnFlippingListener() {
-                @Override
-                public void onFlipped(FlipView flipView, boolean checked) {
-                    int position    =   getCardViewPosition(flipView);
-                    //Toast.makeText(mContext,"ofl_loca_id : "+markers.markerList.get(position).ofl_loca_id,Toast.LENGTH_SHORT).show();
-                    String ofl_loca_id  =  String.valueOf(markers.markerList.get(position).ofl_loca_id);
-
-                    if(checked)
-                        multiMarkerList.add(ofl_loca_id);
-                    else
-                        multiMarkerList.remove(ofl_loca_id);
-
-                    LocationListActivity.multiMarkerString = TextUtils.join(",",multiMarkerList);
-
-//                  Toast.makeText(mContext,"multimarkerstr -> " + LocationListActivity.multiMarkerString,Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            fav_image_view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //Toast.makeText(mContext,"Heart, sweet heart",Toast.LENGTH_SHORT).show();
-                    int position = getCardViewPosition(view);
-
-                    if(TextUtils.equals(markers.markerList.get(position).is_star,"false")){
-                        fav_image_view.setImageResource(R.drawable.heart_fill_28);
-                        sync_image_view.setBackgroundColor(Color.RED);
-                        markers.markerList.get(position).is_star = "true";
-                        updateFav(markers.markerList.get(position).ofl_loca_id,1,0);
-                        //updateCloudMark(markers.markerList.get(position),"true");
-                    }else{
-                        fav_image_view.setImageResource(R.drawable.heart_empty_28);
-                        sync_image_view.setBackgroundColor(Color.RED);
-                        markers.markerList.get(position).is_star = "false";
-                        updateFav(markers.markerList.get(position).ofl_loca_id,0,0);
-                        //updateCloudMark(markers.markerList.get(position),"false");
-                    }
-                    Log.d("Tangho", "onClick: this is sit");
-                }
-            });
-        }
-    }
-
     @NonNull
     private String getOflLocaIdByCardPosition(View view) {
-        int position        =   getCardViewPositionWithParentRecycler(view);
+        int position = getCardViewPositionWithParentRecycler(view);
         return String.valueOf(markers.markerList.get(position).ofl_loca_id);
     }
 
     private int getCardViewPosition(View view) {
-        View parentRow      =   (View) view.getParent();
-        CardView cardView   =   (CardView) parentRow.getParent();
-        RecyclerView rv     =   (RecyclerView) cardView.getParent();
+        View parentRow = (View) view.getParent();
+        CardView cardView = (CardView) parentRow.getParent();
+        RecyclerView rv = (RecyclerView) cardView.getParent();
         return rv.getChildLayoutPosition(cardView);
     }
 
-    private int getCardViewPositionWithParentRecycler(View view){
-        RecyclerView rv     =   (RecyclerView) view.getParent();
+    private int getCardViewPositionWithParentRecycler(View view) {
+        RecyclerView rv = (RecyclerView) view.getParent();
         return rv.getChildLayoutPosition(view);
     }
 
@@ -248,7 +156,7 @@ public class LocationListAdapter extends
         }
     }
 
-    private void updateCloudMark(Mark marker, String is_star){
+    private void updateCloudMark(Mark marker, String is_star) {
         try {
             marker.is_star = is_star;
             Marks markers = new Marks();
@@ -261,6 +169,98 @@ public class LocationListAdapter extends
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
+        }
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+
+        FlipView locationFlipView;
+        TextView location_title_tv, location_user_add_tv, location_user_desc_tv;
+        ImageView fav_image_view, sync_image_view;
+
+        public MyViewHolder(View itemView) {
+            super(itemView);
+
+            locationFlipView = (FlipView) itemView.findViewById(R.id.locationFlipView);
+            location_title_tv = (TextView) itemView.findViewById(R.id.location_title_tv);
+            location_user_add_tv = (TextView) itemView.findViewById(R.id.location_user_add_tv);
+            location_user_desc_tv = (TextView) itemView.findViewById(R.id.location_user_desc_tv);
+            fav_image_view = (ImageView) itemView.findViewById(R.id.fav_image_view);
+            sync_image_view = (ImageView) itemView.findViewById(R.id.sync_indicator);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    //###################################################
+                    String ofl_loca_id = getOflLocaIdByCardPosition(view);
+
+                    Intent intent = new Intent(mContext, HomeActivity.class);
+
+                    intent.putExtra("multimarker", ofl_loca_id);
+                    intent.putExtra("caller", "LocationListActivity");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    mContext.startActivity(intent);
+//                    Toast.makeText(mContext,"card clicked",Toast.LENGTH_SHORT).show();
+                    //###################################################
+
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+//                    Toast.makeText(mContext,"card clicked long",Toast.LENGTH_SHORT).show();
+                    String ofl_loca_id = getOflLocaIdByCardPosition(view);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("ofl_loca_id", ofl_loca_id);
+                    MarkerActionDialog ldc = new MarkerActionDialog();
+                    ldc.setArguments(bundle);
+                    ldc.show(fragmentManager, "securityQuestionDialog");
+                    return false;
+                }
+            });
+
+            locationFlipView.setOnFlippingListener(new FlipView.OnFlippingListener() {
+                @Override
+                public void onFlipped(FlipView flipView, boolean checked) {
+                    int position = getCardViewPosition(flipView);
+                    //Toast.makeText(mContext,"ofl_loca_id : "+markers.markerList.get(position).ofl_loca_id,Toast.LENGTH_SHORT).show();
+                    String ofl_loca_id = String.valueOf(markers.markerList.get(position).ofl_loca_id);
+
+                    if (checked)
+                        multiMarkerList.add(ofl_loca_id);
+                    else
+                        multiMarkerList.remove(ofl_loca_id);
+
+                    LocationListActivity.multiMarkerString = TextUtils.join(",", multiMarkerList);
+
+//                  Toast.makeText(mContext,"multimarkerstr -> " + LocationListActivity.multiMarkerString,Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            fav_image_view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Toast.makeText(mContext,"Heart, sweet heart",Toast.LENGTH_SHORT).show();
+                    int position = getCardViewPosition(view);
+
+                    if (TextUtils.equals(markers.markerList.get(position).is_star, "false")) {
+                        fav_image_view.setImageResource(R.drawable.heart_fill_28);
+                        sync_image_view.setBackgroundColor(Color.RED);
+                        markers.markerList.get(position).is_star = "true";
+                        updateFav(markers.markerList.get(position).ofl_loca_id, 1, 0);
+                        //updateCloudMark(markers.markerList.get(position),"true");
+                    } else {
+                        fav_image_view.setImageResource(R.drawable.heart_empty_28);
+                        sync_image_view.setBackgroundColor(Color.RED);
+                        markers.markerList.get(position).is_star = "false";
+                        updateFav(markers.markerList.get(position).ofl_loca_id, 0, 0);
+                        //updateCloudMark(markers.markerList.get(position),"false");
+                    }
+                    Log.d("Tangho", "onClick: this is sit");
+                }
+            });
         }
     }
 }

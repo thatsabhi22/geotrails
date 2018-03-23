@@ -6,12 +6,10 @@
         android:id="@+id/menu_location_list"
         android:icon="@drawable/list_icon"
         android:title="Location List"
-        app:showAsAction="ifRoom"
-        />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_map"
         android:icon="@drawable/map_menu_icon"
         android:title="Map"
-        app:showAsAction="always"
-        />
+        app:showAsAction="always" />
 </menu>

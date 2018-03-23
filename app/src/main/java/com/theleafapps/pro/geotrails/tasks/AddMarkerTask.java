@@ -14,15 +14,15 @@ import dfapi.BaseAsyncRequest;
 /**
  * Created by aviator on 14/09/16.
  */
-public class AddMarkerTask extends BaseAsyncRequest  {
+public class AddMarkerTask extends BaseAsyncRequest {
 
-    Context context;
     public int locaId;
     public Marks markersObj;
+    Context context;
 
-    public AddMarkerTask(Context context, Marks markers){
-        this.context      =   context;
-        this.markersObj   =   markers;
+    public AddMarkerTask(Context context, Marks markers) {
+        this.context = context;
+        this.markersObj = markers;
     }
 
     @Override
@@ -33,8 +33,8 @@ public class AddMarkerTask extends BaseAsyncRequest  {
 
         verb = "POST";
 
-        requestString = ApiInvoker.serialize(markersObj).replace("\"loca_id\":0,","");
-        requestString = requestString.replace(",\"loca_id\":0","");
+        requestString = ApiInvoker.serialize(markersObj).replace("\"loca_id\":0,", "");
+        requestString = requestString.replace(",\"loca_id\":0", "");
 
         applicationApiKey = AppConstants.API_KEY;
         sessionToken = PrefUtil.getString(context, AppConstants.SESSION_TOKEN);
@@ -43,14 +43,14 @@ public class AddMarkerTask extends BaseAsyncRequest  {
     @Override
     protected void processResponse(String response) throws ApiException, org.json.JSONException {
         // response has whole contact record, but we just want the id
-        markersObj    =   (Marks) ApiInvoker.deserialize(response, "", Marks.class);
-        locaId              =   markersObj.markerList.get(0).loca_id;
+        markersObj = (Marks) ApiInvoker.deserialize(response, "", Marks.class);
+        locaId = markersObj.markerList.get(0).loca_id;
     }
 
     @Override
     protected void onCompletion(boolean success) {
-        if(success) {
-            Log.d("Tang Ho","Success");
+        if (success) {
+            Log.d("Tang Ho", "Success");
         }
     }
 }

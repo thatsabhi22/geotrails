@@ -43,33 +43,32 @@ import java.util.List;
 public class HomeActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
     Intent intent;
-    private GoogleMap mMap;
-    private String TAG = "Tangho";
-    private int ENABLE_LOCATION = 1;
-
     Location location;
     LocationManager locationManager;
     String provider;
-    ImageView mark_location_button,list_button,logo_text;
-    TextView about_us_tv,credits_tv;
+    ImageView mark_location_button, list_button, logo_text;
+    TextView about_us_tv, credits_tv;
     String multiMarker;
+    private GoogleMap mMap;
+    private String TAG = "Tangho";
+    private int ENABLE_LOCATION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        Toast.makeText(this,"Get yourself in open to spot exact location.",Toast.LENGTH_LONG).show();
-        Toast.makeText(this,"It might take a few seconds to determine your correct location !!",Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Get yourself in open to spot exact location.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "It might take a few seconds to determine your correct location !!", Toast.LENGTH_LONG).show();
 
-        intent               = getIntent();
-        multiMarker          = intent.getStringExtra("multimarker");
+        intent = getIntent();
+        multiMarker = intent.getStringExtra("multimarker");
 
         mark_location_button = (ImageView) findViewById(R.id.mark_location_button);
-        list_button          = (ImageView) findViewById(R.id.list_button);
-        logo_text            = (ImageView) findViewById(R.id.logo_text);
-        about_us_tv          = (TextView) findViewById(R.id.about_us);
-        credits_tv           = (TextView) findViewById(R.id.credits);
+        list_button = (ImageView) findViewById(R.id.list_button);
+        logo_text = (ImageView) findViewById(R.id.logo_text);
+        about_us_tv = (TextView) findViewById(R.id.about_us);
+        credits_tv = (TextView) findViewById(R.id.credits);
 
         mark_location_button.bringToFront();
         list_button.bringToFront();
@@ -83,14 +82,14 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        provider        = locationManager.getBestProvider(new Criteria(), false);
+        provider = locationManager.getBestProvider(new Criteria(), false);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
-        if (Build.VERSION.SDK_INT > 22 && !Commons.hasPermissions(HomeActivity.this,Commons.requiredPermissions)) {
+        if (Build.VERSION.SDK_INT > 22 && !Commons.hasPermissions(HomeActivity.this, Commons.requiredPermissions)) {
             Toast.makeText(HomeActivity.this, "Please grant all permissions", Toast.LENGTH_LONG).show();
             Commons.showNonCancellablePermissionDialog(HomeActivity.this);
         }
@@ -112,7 +111,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         about_us_tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent = new Intent(HomeActivity.this,AboutUsActivity.class);
+                intent = new Intent(HomeActivity.this, AboutUsActivity.class);
                 startActivity(intent);
             }
         });
@@ -120,7 +119,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         credits_tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent = new Intent(HomeActivity.this,CreditsActivity.class);
+                intent = new Intent(HomeActivity.this, CreditsActivity.class);
                 startActivity(intent);
             }
         });
@@ -168,10 +167,10 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         // Check which request we're responding to
         if (requestCode == ENABLE_LOCATION) {
             // Make sure the request was successful
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-                location = locationManager.getLastKnownLocation(provider);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            location = locationManager.getLastKnownLocation(provider);
         }
     }
 
@@ -180,13 +179,13 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         LatLng sydney;
         // Add a marker in Sydney and move the camera
-        if(location == null) {
+        if (location == null) {
             sydney = new LatLng(-34, 151);
-        }else{
+        } else {
             sydney = new LatLng(location.getLatitude(), location.getLongitude());
         }
 
-        if(TextUtils.isEmpty(multiMarker)) {
+        if (TextUtils.isEmpty(multiMarker)) {
             Marker mkr = mMap.addMarker(
                     new MarkerOptions()
                             .position(sydney)
@@ -199,33 +198,31 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12f));
             mMap.getUiSettings().setZoomGesturesEnabled(true);
             mMap.getUiSettings().setZoomControlsEnabled(true);
-        }
-        else{
+        } else {
             Marks markers = Commons.getAllMarkersWithIds(multiMarker);
-            insertMarkers(markers.markerList,sydney);
+            insertMarkers(markers.markerList, sydney);
         }
     }
 
     @Override
     public void onLocationChanged(Location locationUpdate) {
         LatLng sydney = new LatLng(locationUpdate.getLatitude(), locationUpdate.getLongitude());
-        if(TextUtils.isEmpty(multiMarker)) {
+        if (TextUtils.isEmpty(multiMarker)) {
             location = locationUpdate;
             mMap.clear();
             Marker mkr =
                     mMap.addMarker(
-                    new MarkerOptions()
-                            .position(sydney)
-                            .title("You are Here")
-                            .snippet("Mark Your Location")
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_used)));
+                            new MarkerOptions()
+                                    .position(sydney)
+                                    .title("You are Here")
+                                    .snippet("Mark Your Location")
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_used)));
             mkr.showInfoWindow();
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13f));
             Log.d(TAG, "onLocationChanged: lat : " + locationUpdate.getLatitude() + " long : " + locationUpdate.getLongitude());
-        }
-        else{
+        } else {
             Marks markers = Commons.getAllMarkersWithIds(multiMarker);
-            insertMarkers(markers.markerList,sydney);
+            insertMarkers(markers.markerList, sydney);
         }
     }
 
@@ -237,8 +234,8 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        if(provider == null){
-            provider        = locationManager.getBestProvider(new Criteria(), false);
+        if (provider == null) {
+            provider = locationManager.getBestProvider(new Criteria(), false);
         }
         locationManager.requestLocationUpdates(provider, 400, 1, this);
     }
@@ -254,15 +251,15 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         locationManager.removeUpdates(this);
     }
 
-    public void checkIfLocationEnabled(Context ctx){
-        final Context context   = ctx;
-        LocationManager lm      = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-        boolean gps_enabled     = false;
+    public void checkIfLocationEnabled(Context ctx) {
+        final Context context = ctx;
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
 //        boolean network_enabled = false;
 
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             MainApplication.getInstance().trackException(ex);
         }
 
@@ -271,29 +268,29 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
 //        } catch(Exception ex) {}
 
 //        if(!gps_enabled && !network_enabled) {
-        if(!gps_enabled) {
-                // notify user
-                AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-                dialog.setMessage(context.getResources().getString(R.string.gps_network_not_enabled));
-                dialog.setPositiveButton(context.getResources().getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        // TODO Auto-generated method stub
-                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        context.startActivity(myIntent);
-                        //get gps
-                    }
-                });
-                dialog.setNegativeButton(context.getString(R.string.Cancel), new DialogInterface.OnClickListener() {
+        if (!gps_enabled) {
+            // notify user
+            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+            dialog.setMessage(context.getResources().getString(R.string.gps_network_not_enabled));
+            dialog.setPositiveButton(context.getResources().getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    context.startActivity(myIntent);
+                    //get gps
+                }
+            });
+            dialog.setNegativeButton(context.getString(R.string.Cancel), new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        // TODO Auto-generated method stub
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
 
-                    }
-                });
-                dialog.show();
-            }
+                }
+            });
+            dialog.show();
+        }
     }
 
 
@@ -303,7 +300,7 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
         for (int i = 0; i < markers.size(); i++) {
             final LatLng position = new LatLng(markers.get(i).user_lat, markers.get(i).user_long);
             String str = markers.get(i).loca_desc;
-            int maxLength = (str.length() < 15)?str.length():15;
+            int maxLength = (str.length() < 15) ? str.length() : 15;
             str = str.substring(0, maxLength);
 
             final MarkerOptions options =

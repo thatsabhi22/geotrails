@@ -60,19 +60,21 @@ import java.util.concurrent.ExecutionException;
 
 public class AddDataActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    private static final int PICK_IMAGE_ID = 234;
+    private final String DEFAULT_STR = "NA";
     Intent intent;
     DbHelper dbHelper;
     GoogleMap mMap;
     Toolbar toolbar;
     boolean result;
-    double userLat,userLong;
-    TextView geo_code_add_tv,loca_id_hid_tv;
-    EditText location_title_et,location_user_address_et,location_desc_et;
+    double userLat, userLong;
+    TextView geo_code_add_tv, loca_id_hid_tv;
+    EditText location_title_et, location_user_address_et, location_desc_et;
     ImageButton mark_button;
     SharedPreferences sp;
-//    ImageView add_location_image_button;
+    //    ImageView add_location_image_button;
     String TAG = "Tangho";
-    String ofl_loca_id,imageFolderName;
+    String ofl_loca_id, imageFolderName;
     int u_id;
     Address geoAddress;
     ActionBar actionBar;
@@ -81,8 +83,6 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     RelativeLayout thumbnailContainer;
     ImageView thumbnail;
     Mark updateMarker;
-    private final String DEFAULT_STR = "NA";
-    private static final int PICK_IMAGE_ID = 234;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,37 +97,37 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         actionBar.setIcon(R.drawable.logo_small);
         actionBar.setTitle("  Add Info");
 
-        Intent recIntent            =   getIntent();
-        imageList                   =   new ArrayList<String>();
-        sp                          =   getSharedPreferences("g_t_data",Context.MODE_PRIVATE);
-        u_id                        =   sp.getInt("u_id",0);
-        ofl_loca_id                 =   recIntent.getStringExtra("ofl_loca_id");
-        userLat                     =   recIntent.getDoubleExtra("userLat",0);
-        userLong                    =   recIntent.getDoubleExtra("userLong",0);
-        inflater                    =   (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        Intent recIntent = getIntent();
+        imageList = new ArrayList<String>();
+        sp = getSharedPreferences("g_t_data", Context.MODE_PRIVATE);
+        u_id = sp.getInt("u_id", 0);
+        ofl_loca_id = recIntent.getStringExtra("ofl_loca_id");
+        userLat = recIntent.getDoubleExtra("userLat", 0);
+        userLong = recIntent.getDoubleExtra("userLong", 0);
+        inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 //      thumbnailContainer          =   (RelativeLayout) findViewById(R.id.thumbnailContainer);
-        loca_id_hid_tv              =   (TextView) findViewById(R.id.loca_id_hid_tv);
-        geo_code_add_tv             =   (TextView) findViewById(R.id.reverse_geo_add_tv);
-        location_title_et           =   (EditText) findViewById(R.id.location_title_et);
-        location_user_address_et    =   (EditText) findViewById(R.id.location_user_address_et);
-        location_desc_et            =   (EditText) findViewById(R.id.location_desc_et);
-        mark_button                 =   (ImageButton) findViewById(R.id.mark_button);
+        loca_id_hid_tv = (TextView) findViewById(R.id.loca_id_hid_tv);
+        geo_code_add_tv = (TextView) findViewById(R.id.reverse_geo_add_tv);
+        location_title_et = (EditText) findViewById(R.id.location_title_et);
+        location_user_address_et = (EditText) findViewById(R.id.location_user_address_et);
+        location_desc_et = (EditText) findViewById(R.id.location_desc_et);
+        mark_button = (ImageButton) findViewById(R.id.mark_button);
 //      add_location_image_button   =   (ImageView) findViewById(R.id.add_location_image_button);
 
 
-        if(!TextUtils.isEmpty(ofl_loca_id)){
+        if (!TextUtils.isEmpty(ofl_loca_id)) {
 
-            Marks markers   =   Commons.getAllMarkersWithIds(ofl_loca_id);
-            updateMarker     =   markers.markerList.get(0);
+            Marks markers = Commons.getAllMarkersWithIds(ofl_loca_id);
+            updateMarker = markers.markerList.get(0);
 
             actionBar.setTitle("  Edit Info");
 
-            if(updateMarker!=null){
-                userLat     =   updateMarker.user_lat;
-                userLong    =   updateMarker.user_long;
+            if (updateMarker != null) {
+                userLat = updateMarker.user_lat;
+                userLong = updateMarker.user_long;
 
-                if(!TextUtils.equals(updateMarker.geo_code_add,"offline"))
+                if (!TextUtils.equals(updateMarker.geo_code_add, "offline"))
                     geo_code_add_tv.setText(updateMarker.geo_code_add);
 
                 loca_id_hid_tv.setText(String.valueOf(updateMarker.ofl_loca_id));
@@ -143,18 +143,18 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
 
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 
-        try{
-            List<Address> listAddress = geocoder.getFromLocation(userLat,userLong,1);
-            if(listAddress!=null && listAddress.size()>0){
+        try {
+            List<Address> listAddress = geocoder.getFromLocation(userLat, userLong, 1);
+            if (listAddress != null && listAddress.size() > 0) {
                 Log.d(TAG, "Address Geocode : " + listAddress.get(0).toString());
                 geoAddress = listAddress.get(0);
 
-                if(geoAddress!=null){
+                if (geoAddress != null) {
                     StringBuilder sb = new StringBuilder();
                     int maxAddlines = geoAddress.getMaxAddressLineIndex();
-                    for(int i=0;i < maxAddlines;i++){
+                    for (int i = 0; i < maxAddlines; i++) {
                         sb.append(geoAddress.getAddressLine(i));
-                        if(i != maxAddlines-1) {
+                        if (i != maxAddlines - 1) {
                             sb.append(", ");
                         }
                     }
@@ -164,7 +164,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         } catch (IOException e) {
             MainApplication.getInstance().trackException(e);
             geo_code_add_tv.setVisibility(View.GONE);
-            Toast.makeText(this,"You're Offline!! , Address could not be determined.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You're Offline!! , Address could not be determined.", Toast.LENGTH_SHORT).show();
             //e.printStackTrace();
         }
 
@@ -180,14 +180,14 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         mark_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(TextUtils.isEmpty(location_title_et.getText())){
+                if (TextUtils.isEmpty(location_title_et.getText())) {
                     location_title_et.setError("Atleast Put a title to this location");
-                }else{
-                    try{
+                } else {
+                    try {
 
-                        if(TextUtils.equals(loca_id_hid_tv.getText(),"empty")) {
+                        if (TextUtils.equals(loca_id_hid_tv.getText(), "empty")) {
                             AddNewMarker();
-                        }else{
+                        } else {
                             EditMarker();
                         }
 
@@ -208,85 +208,85 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
 
         String geoCodeAdd = null;
 
-            SQLiteStatement stmt    =   db.compileStatement(query);
-            stmt.bindDouble(1, userLat);
-            stmt.bindDouble(2, userLong);
-            stmt.bindLong(3, u_id);
-            stmt.bindString(4, location_user_address_et.getText().toString());
-            stmt.bindString(5, location_title_et.getText().toString());
-            stmt.bindString(6, location_desc_et.getText().toString());
+        SQLiteStatement stmt = db.compileStatement(query);
+        stmt.bindDouble(1, userLat);
+        stmt.bindDouble(2, userLong);
+        stmt.bindLong(3, u_id);
+        stmt.bindString(4, location_user_address_et.getText().toString());
+        stmt.bindString(5, location_title_et.getText().toString());
+        stmt.bindString(6, location_desc_et.getText().toString());
 
-            geoCodeAdd              =   geo_code_add_tv.getText().toString();
-            if (!TextUtils.isEmpty(geoCodeAdd)) {
-                if (TextUtils.equals("<Reverse GC>", geoCodeAdd)) {
-                    geoCodeAdd      =   "offline";
-                }
+        geoCodeAdd = geo_code_add_tv.getText().toString();
+        if (!TextUtils.isEmpty(geoCodeAdd)) {
+            if (TextUtils.equals("<Reverse GC>", geoCodeAdd)) {
+                geoCodeAdd = "offline";
             }
-            stmt.bindString(7, geoCodeAdd);
+        }
+        stmt.bindString(7, geoCodeAdd);
 
-            int star_value = 0;
-            if(updateMarker!=null){
-                if(TextUtils.equals(updateMarker.is_star,"true")){
-                    star_value = 1;
-                }
-                stmt.bindLong(10,Integer.valueOf(loca_id_hid_tv.getText().toString()));
+        int star_value = 0;
+        if (updateMarker != null) {
+            if (TextUtils.equals(updateMarker.is_star, "true")) {
+                star_value = 1;
             }
-            stmt.bindLong(8, star_value);
-            stmt.bindLong(9, 0);
+            stmt.bindLong(10, Integer.valueOf(loca_id_hid_tv.getText().toString()));
+        }
+        stmt.bindLong(8, star_value);
+        stmt.bindLong(9, 0);
 
-            stmt.execute();
+        stmt.execute();
 
-            switch(queryType) {
-                case "update":
-                    Toast.makeText(this, "The location is updated successfully", Toast.LENGTH_SHORT).show();
-                    break;
-                case "insert":
-                    Toast.makeText(this, "The location is added successfully", Toast.LENGTH_SHORT).show();
-                    break;
-            }
+        switch (queryType) {
+            case "update":
+                Toast.makeText(this, "The location is updated successfully", Toast.LENGTH_SHORT).show();
+                break;
+            case "insert":
+                Toast.makeText(this, "The location is added successfully", Toast.LENGTH_SHORT).show();
+                break;
+        }
         return geoCodeAdd;
     }
 
-    private void EditMarker(){
-        dbHelper            =   new DbHelper(AddDataActivity.this);
-        SQLiteDatabase db   =   dbHelper.getWritableDatabase();
-        executeDBQuery(db,DbHelper.update_marker_st,"update");
+    private void EditMarker() {
+        dbHelper = new DbHelper(AddDataActivity.this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        executeDBQuery(db, DbHelper.update_marker_st, "update");
 
-        intent = new Intent(this,LocationListActivity.class);
+        intent = new Intent(this, LocationListActivity.class);
         startActivity(intent);
     }
 
     private void AddNewMarker() throws InterruptedException, ExecutionException {
-        dbHelper            =   new DbHelper(AddDataActivity.this);
-        SQLiteDatabase db   =   dbHelper.getWritableDatabase();
-        String geoCodeAdd   =   executeDBQuery(db, DbHelper.insert_marker_st,"insert");
+        dbHelper = new DbHelper(AddDataActivity.this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String geoCodeAdd = executeDBQuery(db, DbHelper.insert_marker_st, "insert");
 
 
-        int ofl_loca_id     =   0;
-        String query        =   DbHelper.select_last_inserted_loca_id;
-        Cursor c            =   db.rawQuery(query, null);
+        int ofl_loca_id = 0;
+        String query = DbHelper.select_last_inserted_loca_id;
+        Cursor c = db.rawQuery(query, null);
         if (c != null && c.moveToFirst()) {
-            ofl_loca_id     =   (int) c.getLong(0);
+            ofl_loca_id = (int) c.getLong(0);
         }
         Log.d(TAG, "Records added");
 
-        Marks markers       =   new Marks();
-        Mark marker         =   new Mark();
-        marker.user_lat     =   userLat;
-        marker.user_long    =   userLong;
-        marker.user_id      =   u_id;
-        marker.is_deleted   =   0;
+        Marks markers = new Marks();
+        Mark marker = new Mark();
+        marker.user_lat = userLat;
+        marker.user_long = userLong;
+        marker.user_id = u_id;
+        marker.is_deleted = 0;
 
-        marker.user_add     = location_user_address_et.getText().toString();
-        marker.loca_title   = location_title_et.getText().toString();
-        marker.loca_desc    = location_desc_et.getText().toString();
+        marker.user_add = location_user_address_et.getText().toString();
+        marker.loca_title = location_title_et.getText().toString();
+        marker.loca_desc = location_desc_et.getText().toString();
         marker.geo_code_add = geoCodeAdd;
-        marker.is_star      = "false";
+        marker.is_star = "false";
         markers.markerList.add(marker);
 
         AddMarkerTask addMarkerTask
-                            = new AddMarkerTask(AddDataActivity.this, markers);
-        result              = addMarkerTask.execute().get();
+                = new AddMarkerTask(AddDataActivity.this, markers);
+        result = addMarkerTask.execute().get();
 
         if (result) {
 
@@ -312,7 +312,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         try {
             switch (requestCode) {
                 case PICK_IMAGE_ID:
-                    if(data!=null){
+                    if (data != null) {
                         Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
                         saveToInternalStorage(bitmap);
                     }
@@ -329,7 +329,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
 
     private String saveToInternalStorage(Bitmap bitmapImage) throws IOException {
 
-        ContextWrapper cw   =   new ContextWrapper(getApplicationContext());
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -340,8 +340,8 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
 
         // path to /data/data/yourapp/app_data/imageDir
 
-        imageFolderName     =   Commons.randomAlphaNumeric(10);
-        File directory      =   cw.getDir("imageDir", Context.MODE_PRIVATE);
+        imageFolderName = Commons.randomAlphaNumeric(10);
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
 //        FileUtils.forceMkdir(new File(directory.getPath()+"/"+imageFolderName));
 
 //        directory           =   new File(directory.getPath()+"/"+imageFolderName);
@@ -349,19 +349,19 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         // Create imageDir
         int minimum = 1;
         int maximum = 100;
-        int random ;
+        int random;
 
-        random      =   minimum + (int)(Math.random() * maximum);
-        File mypath =   new File(directory,"img_"+ random +".jpg");
+        random = minimum + (int) (Math.random() * maximum);
+        File mypath = new File(directory, "img_" + random + ".jpg");
 
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(mypath);
             // Use the compress method on the BitMap object to write image to the OutputStream
             bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            imageList.add("img_"+ random);
+            imageList.add("img_" + random);
 
-            thumbnail  = (ImageView) inflater.inflate(R.layout.thumbnail_image_add_data,null);
+            thumbnail = (ImageView) inflater.inflate(R.layout.thumbnail_image_add_data, null);
             thumbnail.setImageBitmap(bitmapImage);
             thumbnailContainer.addView(thumbnail);
         } catch (Exception e) {
@@ -375,9 +375,9 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
 
     public int convertToDp(int input) {
         // Get the screen's density scale
-         final float scale = getResources().getDisplayMetrics().density;
+        final float scale = getResources().getDisplayMetrics().density;
         // Convert the dps to pixels, based on density scale
-            return (int) (input * scale + 0.5f);
+        return (int) (input * scale + 0.5f);
     }
 
     @Override
@@ -385,7 +385,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         mMap = googleMap;
         // Add a marker in Sydney and move the camera
         //LatLng sydney = new LatLng(-34, 151);
-        LatLng sydney = new LatLng(userLat,userLong);
+        LatLng sydney = new LatLng(userLat, userLong);
         Marker mkr = mMap.addMarker(
                 new MarkerOptions()
                         .position(sydney)
@@ -408,21 +408,21 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         switch (item.getItemId()) {
             case R.id.menu_location_list:
 
-                intent = new Intent(this,LocationListActivity.class);
-                intent.putExtra("caller","AddDataActivity");
-                intent.putExtra("userLat",userLat);
-                intent.putExtra("userLong",userLong);
+                intent = new Intent(this, LocationListActivity.class);
+                intent.putExtra("caller", "AddDataActivity");
+                intent.putExtra("userLat", userLat);
+                intent.putExtra("userLong", userLong);
                 startActivity(intent);
                 return true;
             case R.id.menu_map:
-                intent = new Intent(this,HomeActivity.class);
-                intent.putExtra("caller","AddDataActivity");
+                intent = new Intent(this, HomeActivity.class);
+                intent.putExtra("caller", "AddDataActivity");
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 return true;
             case android.R.id.home:
                 intent = new Intent(this, HomeActivity.class);
-                intent.putExtra("caller","AddDataActivity");
+                intent.putExtra("caller", "AddDataActivity");
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
@@ -457,7 +457,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         int x = (int) ev.getX();
         int y = (int) ev.getY();
 
-        if(view instanceof EditText){
+        if (view instanceof EditText) {
             EditText innerView = (EditText) getCurrentFocus();
 
             if (ev.getAction() == MotionEvent.ACTION_UP &&
