@@ -35,7 +35,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.app.MainApplication;
 import com.theleafapps.pro.geotrails.models.Mark;
-import com.theleafapps.pro.geotrails.models.multiples.Marks;
+import com.theleafapps.pro.geotrails.models.multiples.Markers;
 import com.theleafapps.pro.geotrails.utils.Commons;
 
 import java.util.List;
@@ -199,8 +199,8 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.getUiSettings().setZoomGesturesEnabled(true);
             mMap.getUiSettings().setZoomControlsEnabled(true);
         } else {
-            Marks markers = Commons.getAllMarkersWithIds(multiMarker);
-            insertMarkers(markers.markerList, sydney);
+            Markers markers = Commons.getAllMarkersWithIds(multiMarker);
+            insertMarkers(markers.markList, sydney);
         }
     }
 
@@ -221,8 +221,8 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13f));
             Log.d(TAG, "onLocationChanged: lat : " + locationUpdate.getLatitude() + " long : " + locationUpdate.getLongitude());
         } else {
-            Marks markers = Commons.getAllMarkersWithIds(multiMarker);
-            insertMarkers(markers.markerList, sydney);
+            Markers markers = Commons.getAllMarkersWithIds(multiMarker);
+            insertMarkers(markers.markList, sydney);
         }
     }
 

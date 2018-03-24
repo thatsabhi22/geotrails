@@ -29,7 +29,7 @@ public class AddUserTask extends BaseAsyncRequest {
     protected void doSetup() throws ApiException {
         callerName = "AddUserTask";
         serviceName = AppConstants.DB_SVC;
-        endPoint = "user";
+        endPoint = "geo_user";
 
         verb = "POST";
 

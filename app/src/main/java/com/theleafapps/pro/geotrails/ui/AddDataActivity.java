@@ -44,7 +44,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.app.MainApplication;
 import com.theleafapps.pro.geotrails.models.Mark;
-import com.theleafapps.pro.geotrails.models.multiples.Marks;
+import com.theleafapps.pro.geotrails.models.multiples.Markers;
 import com.theleafapps.pro.geotrails.tasks.AddMarkerTask;
 import com.theleafapps.pro.geotrails.utils.Commons;
 import com.theleafapps.pro.geotrails.utils.DbHelper;
@@ -82,7 +82,7 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
     LayoutInflater inflater;
     RelativeLayout thumbnailContainer;
     ImageView thumbnail;
-    Mark updateMarker;
+    Mark updateMark;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,22 +118,22 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
 
         if (!TextUtils.isEmpty(ofl_loca_id)) {
 
-            Marks markers = Commons.getAllMarkersWithIds(ofl_loca_id);
-            updateMarker = markers.markerList.get(0);
+            Markers markers = Commons.getAllMarkersWithIds(ofl_loca_id);
+            updateMark = markers.markList.get(0);
 
             actionBar.setTitle("  Edit Info");
 
-            if (updateMarker != null) {
-                userLat = updateMarker.user_lat;
-                userLong = updateMarker.user_long;
+            if (updateMark != null) {
+                userLat = updateMark.user_lat;
+                userLong = updateMark.user_long;
 
-                if (!TextUtils.equals(updateMarker.geo_code_add, "offline"))
-                    geo_code_add_tv.setText(updateMarker.geo_code_add);
+                if (!TextUtils.equals(updateMark.geo_code_add, "offline"))
+                    geo_code_add_tv.setText(updateMark.geo_code_add);
 
-                loca_id_hid_tv.setText(String.valueOf(updateMarker.ofl_loca_id));
-                location_title_et.setText(updateMarker.loca_title);
-                location_user_address_et.setText(updateMarker.user_add);
-                location_desc_et.setText(updateMarker.loca_desc);
+                loca_id_hid_tv.setText(String.valueOf(updateMark.ofl_loca_id));
+                location_title_et.setText(updateMark.loca_title);
+                location_user_address_et.setText(updateMark.user_add);
+                location_desc_et.setText(updateMark.loca_desc);
             }
         }
 
@@ -225,8 +225,8 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         stmt.bindString(7, geoCodeAdd);
 
         int star_value = 0;
-        if (updateMarker != null) {
-            if (TextUtils.equals(updateMarker.is_star, "true")) {
+        if (updateMark != null) {
+            if (TextUtils.equals(updateMark.is_star, "true")) {
                 star_value = 1;
             }
             stmt.bindLong(10, Integer.valueOf(loca_id_hid_tv.getText().toString()));
@@ -270,19 +270,19 @@ public class AddDataActivity extends AppCompatActivity implements OnMapReadyCall
         }
         Log.d(TAG, "Records added");
 
-        Marks markers = new Marks();
-        Mark marker = new Mark();
-        marker.user_lat = userLat;
-        marker.user_long = userLong;
-        marker.user_id = u_id;
-        marker.is_deleted = 0;
+        Markers markers = new Markers();
+        Mark mark = new Mark();
+        mark.user_lat = userLat;
+        mark.user_long = userLong;
+        mark.user_id = u_id;
+        mark.is_deleted = 0;
 
-        marker.user_add = location_user_address_et.getText().toString();
-        marker.loca_title = location_title_et.getText().toString();
-        marker.loca_desc = location_desc_et.getText().toString();
-        marker.geo_code_add = geoCodeAdd;
-        marker.is_star = "false";
-        markers.markerList.add(marker);
+        mark.user_add = location_user_address_et.getText().toString();
+        mark.loca_title = location_title_et.getText().toString();
+        mark.loca_desc = location_desc_et.getText().toString();
+        mark.geo_code_add = geoCodeAdd;
+        mark.is_star = "false";
+        markers.markList.add(mark);
 
         AddMarkerTask addMarkerTask
                 = new AddMarkerTask(AddDataActivity.this, markers);

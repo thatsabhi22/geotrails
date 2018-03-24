@@ -3,7 +3,7 @@ package com.theleafapps.pro.geotrails.tasks;
 import android.content.Context;
 import android.util.Log;
 
-import com.theleafapps.pro.geotrails.models.multiples.Marks;
+import com.theleafapps.pro.geotrails.models.multiples.Markers;
 import com.theleafapps.pro.geotrails.utils.AppConstants;
 import com.theleafapps.pro.geotrails.utils.PrefUtil;
 
@@ -18,10 +18,10 @@ import dfapi.BaseAsyncRequest;
 public class UpdateMarkerIsStarTask extends BaseAsyncRequest {
 
     public int locaId;
-    public Marks markers;
+    public Markers markers;
     Context context;
 
-    public UpdateMarkerIsStarTask(Context context, Marks markers) {
+    public UpdateMarkerIsStarTask(Context context, Markers markers) {
         this.context = context;
         this.markers = markers;
     }
@@ -43,8 +43,8 @@ public class UpdateMarkerIsStarTask extends BaseAsyncRequest {
 
     @Override
     protected void processResponse(String response) throws ApiException, org.json.JSONException {
-        markers = (Marks) ApiInvoker.deserialize(response, "", Marks.class);
-        locaId = markers.markerList.get(0).loca_id;
+        markers = (Markers) ApiInvoker.deserialize(response, "", Markers.class);
+        locaId = markers.markList.get(0).loca_id;
     }
 
     @Override

@@ -22,7 +22,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.dialogs.MarkerActionDialog;
 import com.theleafapps.pro.geotrails.models.Mark;
-import com.theleafapps.pro.geotrails.models.multiples.Marks;
+import com.theleafapps.pro.geotrails.models.multiples.Markers;
 import com.theleafapps.pro.geotrails.tasks.UpdateMarkerIsStarTask;
 import com.theleafapps.pro.geotrails.ui.HomeActivity;
 import com.theleafapps.pro.geotrails.ui.LocationListActivity;
@@ -44,14 +44,14 @@ public class LocationListAdapter extends
     DbHelper dbHelper;
     Context mContext;
     LayoutInflater inflater;
-    Marks markers;
+    Markers markers;
     Mark current;
     ImageLoader mImageLoader;
     String multiMarker;
     Set<String> multiMarkerList;
     FragmentManager fragmentManager;
 
-    public LocationListAdapter(Context context, Marks markers, String multiMarker, FragmentManager fragmentManager) {
+    public LocationListAdapter(Context context, Markers markers, String multiMarker, FragmentManager fragmentManager) {
         inflater = LayoutInflater.from(context);
         this.mContext = context;
         this.markers = markers;
@@ -69,7 +69,7 @@ public class LocationListAdapter extends
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        current = markers.markerList.get(position);
+        current = markers.markList.get(position);
         mImageLoader = MySingleton.getInstance(mContext).getImageLoader();
 
 //        holder.locationImageView.setImageUrl("http://dummyimage.com/54x54/000/fff&text=0",mImageLoader);
@@ -113,8 +113,8 @@ public class LocationListAdapter extends
 
     @Override
     public int getItemCount() {
-        if (markers != null && markers.markerList.size() != 0) {
-            return markers.markerList.size();
+        if (markers != null && markers.markList.size() != 0) {
+            return markers.markList.size();
         }
         return 0;
     }
@@ -127,7 +127,7 @@ public class LocationListAdapter extends
     @NonNull
     private String getOflLocaIdByCardPosition(View view) {
         int position = getCardViewPositionWithParentRecycler(view);
-        return String.valueOf(markers.markerList.get(position).ofl_loca_id);
+        return String.valueOf(markers.markList.get(position).ofl_loca_id);
     }
 
     private int getCardViewPosition(View view) {
@@ -156,11 +156,11 @@ public class LocationListAdapter extends
         }
     }
 
-    private void updateCloudMark(Mark marker, String is_star) {
+    private void updateCloudMark(Mark mark, String is_star) {
         try {
-            marker.is_star = is_star;
-            Marks markers = new Marks();
-            markers.markerList.add(marker);
+            mark.is_star = is_star;
+            Markers markers = new Markers();
+            markers.markList.add(mark);
 
             UpdateMarkerIsStarTask updateMarkerIsStarTask = new UpdateMarkerIsStarTask(mContext, markers);
             updateMarkerIsStarTask.execute().get();
@@ -225,8 +225,8 @@ public class LocationListAdapter extends
                 @Override
                 public void onFlipped(FlipView flipView, boolean checked) {
                     int position = getCardViewPosition(flipView);
-                    //Toast.makeText(mContext,"ofl_loca_id : "+markers.markerList.get(position).ofl_loca_id,Toast.LENGTH_SHORT).show();
-                    String ofl_loca_id = String.valueOf(markers.markerList.get(position).ofl_loca_id);
+                    //Toast.makeText(mContext,"ofl_loca_id : "+markers.markList.get(position).ofl_loca_id,Toast.LENGTH_SHORT).show();
+                    String ofl_loca_id = String.valueOf(markers.markList.get(position).ofl_loca_id);
 
                     if (checked)
                         multiMarkerList.add(ofl_loca_id);
@@ -245,18 +245,18 @@ public class LocationListAdapter extends
                     //Toast.makeText(mContext,"Heart, sweet heart",Toast.LENGTH_SHORT).show();
                     int position = getCardViewPosition(view);
 
-                    if (TextUtils.equals(markers.markerList.get(position).is_star, "false")) {
+                    if (TextUtils.equals(markers.markList.get(position).is_star, "false")) {
                         fav_image_view.setImageResource(R.drawable.heart_fill_28);
                         sync_image_view.setBackgroundColor(Color.RED);
-                        markers.markerList.get(position).is_star = "true";
-                        updateFav(markers.markerList.get(position).ofl_loca_id, 1, 0);
-                        //updateCloudMark(markers.markerList.get(position),"true");
+                        markers.markList.get(position).is_star = "true";
+                        updateFav(markers.markList.get(position).ofl_loca_id, 1, 0);
+                        //updateCloudMark(markers.markList.get(position),"true");
                     } else {
                         fav_image_view.setImageResource(R.drawable.heart_empty_28);
                         sync_image_view.setBackgroundColor(Color.RED);
-                        markers.markerList.get(position).is_star = "false";
-                        updateFav(markers.markerList.get(position).ofl_loca_id, 0, 0);
-                        //updateCloudMark(markers.markerList.get(position),"false");
+                        markers.markList.get(position).is_star = "false";
+                        updateFav(markers.markList.get(position).ofl_loca_id, 0, 0);
+                        //updateCloudMark(markers.markList.get(position),"false");
                     }
                     Log.d("Tangho", "onClick: this is sit");
                 }

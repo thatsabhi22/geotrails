@@ -3,7 +3,7 @@ package com.theleafapps.pro.geotrails.tasks;
 import android.content.Context;
 import android.util.Log;
 
-import com.theleafapps.pro.geotrails.models.multiples.Marks;
+import com.theleafapps.pro.geotrails.models.multiples.Markers;
 import com.theleafapps.pro.geotrails.utils.AppConstants;
 import com.theleafapps.pro.geotrails.utils.PrefUtil;
 
@@ -17,10 +17,10 @@ import dfapi.BaseAsyncRequest;
 public class AddMarkerTask extends BaseAsyncRequest {
 
     public int locaId;
-    public Marks markersObj;
+    public Markers markersObj;
     Context context;
 
-    public AddMarkerTask(Context context, Marks markers) {
+    public AddMarkerTask(Context context, Markers markers) {
         this.context = context;
         this.markersObj = markers;
     }
@@ -43,8 +43,8 @@ public class AddMarkerTask extends BaseAsyncRequest {
     @Override
     protected void processResponse(String response) throws ApiException, org.json.JSONException {
         // response has whole contact record, but we just want the id
-        markersObj = (Marks) ApiInvoker.deserialize(response, "", Marks.class);
-        locaId = markersObj.markerList.get(0).loca_id;
+        markersObj = (Markers) ApiInvoker.deserialize(response, "", Markers.class);
+        locaId = markersObj.markList.get(0).loca_id;
     }
 
     @Override

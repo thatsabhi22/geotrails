@@ -25,16 +25,28 @@
             android:name=".ui.HomeActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.LocationListActivity" />
-        <activity android:name=".ui.AddDataActivity" />
-        <activity android:name=".ui.SplashActivity">
+        <activity
+            android:name=".ui.LocationListActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.AddDataActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SplashActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.AuthActivity" />
+        <activity
+            android:name=".ui.AuthActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.AddImageActivity"
             android:parentActivityName=".ui.AddDataActivity">
@@ -42,7 +54,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.theleafapps.pro.geotrails.ui.AddDataActivity" />
         </activity>
-        <activity android:name=".ui.LoadingActivity" />
+        <activity
+            android:name=".ui.LoadingActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity android:name=".ui.AboutUsActivity" />
 
         <!--

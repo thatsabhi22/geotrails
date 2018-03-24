@@ -34,10 +34,10 @@ public class GetUserByFbIdTask extends BaseAsyncRequest {
 
     @Override
     protected void doSetup() throws ApiException, JSONException {
-        callerName = "getCustomerById";
+        callerName = "getUserByFbId";
 
         serviceName = AppConstants.DB_SVC;
-        endPoint = "user";
+        endPoint = "geo_user";
         verb = "GET";
 
         // filter to only select the contacts in this group

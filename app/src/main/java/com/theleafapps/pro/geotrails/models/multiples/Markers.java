@@ -12,9 +12,9 @@ import java.util.List;
  * Created by aviator on 29/08/16.
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class Marks extends BaseRecord {
+public class Markers extends BaseRecord {
 
     @JsonProperty("resource")
-    public List<Mark> markerList = new ArrayList<>();
+    public List<Mark> markList = new ArrayList<>();
 
 }

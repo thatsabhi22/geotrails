@@ -21,7 +21,7 @@ import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.theleafapps.pro.geotrails.models.Mark;
-import com.theleafapps.pro.geotrails.models.multiples.Marks;
+import com.theleafapps.pro.geotrails.models.multiples.Markers;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -72,8 +72,8 @@ public class Commons {
     public static void showPermissionDialog(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setCancelable(false);
-        builder.setMessage("Please grant all required permissions\n " +
-                "The App may not function well otherwise.");
+        builder.setMessage("Please grant all required permissions. The App " +
+                "may not function well otherwise.");
         builder.setTitle("GeoTrails");
         builder.setPositiveButton("App Settings", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -88,8 +88,8 @@ public class Commons {
     public static void showNonCancellablePermissionDialog(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setCancelable(false);
-        builder.setMessage("Please grant all required permissions\n" +
-                "The App may not function well otherwise.");
+        builder.setMessage("Please grant all required permissions. The App " +
+                "may not function well otherwise.");
         builder.setTitle("GeoTrails");
         builder.setPositiveButton("App Settings", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -133,9 +133,9 @@ public class Commons {
         return false;
     }
 
-    public static Marks getAllMarkers(String query) {
+    public static Markers getAllMarkers(String query) {
 
-        Marks markers = new Marks();
+        Markers markers = new Markers();
         Cursor c = DbHelper.GtrailsDB.rawQuery(query, null);
 
         populateMarkers(markers, c);
@@ -143,9 +143,9 @@ public class Commons {
         return markers;
     }
 
-    public static Marks getAllMarkersWithId(String query, int user_id) {
+    public static Markers getAllMarkersWithId(String query, int user_id) {
 
-        Marks markers = new Marks();
+        Markers markers = new Markers();
         Cursor c = DbHelper.GtrailsDB.rawQuery(query, new String[]{String.valueOf(user_id)});
 
         populateMarkers(markers, c);
@@ -169,7 +169,7 @@ public class Commons {
         params.clear();
     }
 
-    private static void populateMarkers(Marks markers, Cursor c) {
+    private static void populateMarkers(Markers markers, Cursor c) {
         int locIdIndex = c.getColumnIndex("loca_id");
         int oflLocIdIndex = c.getColumnIndex("ofl_loca_id");
         int userLatIndex = c.getColumnIndex("user_lat");
@@ -206,12 +206,12 @@ public class Commons {
                 marker.created_on = c.getString(c_on);
                 marker.modified_on = c.getString(m_on);
 
-                markers.markerList.add(marker);
+                markers.markList.add(marker);
             } while (c.moveToNext());
         }
     }
 
-    public static Marks getAllMarkersWithIds(String multiMarkerString) {
+    public static Markers getAllMarkersWithIds(String multiMarkerString) {
         String query = "";
         if (multiMarkerString.matches("^\\d+(,\\d+)*$")) {
             query = DbHelper.get_all_markers_with_ids.replace("?", multiMarkerString);

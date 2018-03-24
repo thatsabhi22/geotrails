@@ -22,7 +22,7 @@ import com.theleafapps.pro.geotrails.R;
 import com.theleafapps.pro.geotrails.adapters.LocationListAdapter;
 import com.theleafapps.pro.geotrails.app.MainApplication;
 import com.theleafapps.pro.geotrails.models.Mark;
-import com.theleafapps.pro.geotrails.models.multiples.Marks;
+import com.theleafapps.pro.geotrails.models.multiples.Markers;
 import com.theleafapps.pro.geotrails.tasks.AddMarkerTask;
 import com.theleafapps.pro.geotrails.tasks.UpdateMarkerIsStarTask;
 import com.theleafapps.pro.geotrails.utils.Commons;
@@ -40,7 +40,7 @@ public class LocationListActivity extends AppCompatActivity {
     double userLat, userLong;
     TextView no_location_tv;
     ImageView mark_now_button;
-    Marks markers;
+    Markers markers;
     Toolbar toolbar;
     ActionBar actionBar;
     String caller;
@@ -75,7 +75,7 @@ public class LocationListActivity extends AppCompatActivity {
         locationListRecyclerView
                 = (RecyclerView) findViewById(R.id.location_list_recycler_view);
 
-        if (markers != null && markers.markerList.size() > 0) {
+        if (markers != null && markers.markList.size() > 0) {
             reloadLocationList();
         } else {
             setEmptyLocationList();
@@ -131,25 +131,25 @@ public class LocationListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public Marks syncAllNewUnsyncedMarkers() {
+    public Markers syncAllNewUnsyncedMarkers() {
 
         List<Integer> ofl_loca_id_list = new ArrayList<>();
-        Marks markers = null;
+        Markers markers = null;
         try {
             markers = Commons.getAllMarkers(DbHelper.get_all_new_unsynced_marker);
-            for (Mark marker : markers.markerList) {
+            for (Mark marker : markers.markList) {
                 ofl_loca_id_list.add(marker.ofl_loca_id);
             }
-            if (markers != null && markers.markerList.size() > 0) {
+            if (markers != null && markers.markList.size() > 0) {
                 AddMarkerTask addMarkerTask = new AddMarkerTask(this, markers);
                 addMarkerTask.execute().get();
 
                 int i = 0;
-                Marks responseMarkers = addMarkerTask.markersObj;
+                Markers responseMarkers = addMarkerTask.markersObj;
 
                 List<Object> param = new ArrayList<>();
 
-                for (Mark mark : responseMarkers.markerList) {
+                for (Mark mark : responseMarkers.markList) {
                     param.add(String.valueOf(mark.loca_id));
                     param.add(String.valueOf(ofl_loca_id_list.get(i)));
                     Commons.executeLocalQuery(this, DbHelper.update_all_new_unsync_markers, param);
@@ -166,26 +166,26 @@ public class LocationListActivity extends AppCompatActivity {
         return markers;
     }
 
-    public Marks syncAllOldUnsyncedMarkers() {
+    public Markers syncAllOldUnsyncedMarkers() {
 
         List<Integer> ofl_loca_id_list = new ArrayList<>();
-        Marks markers = null;
+        Markers markers = null;
 
         try {
             markers = Commons.getAllMarkers(DbHelper.get_all_old_unsynced_marker);
-            for (Mark marker : markers.markerList) {
+            for (Mark marker : markers.markList) {
                 ofl_loca_id_list.add(marker.ofl_loca_id);
             }
-            if (markers != null && markers.markerList.size() > 0) {
+            if (markers != null && markers.markList.size() > 0) {
                 UpdateMarkerIsStarTask updateMarkerIsStarTask = new UpdateMarkerIsStarTask(this, markers);
                 updateMarkerIsStarTask.execute().get();
 
                 int i = 0;
-                Marks responseMarkers = updateMarkerIsStarTask.markers;
+                Markers responseMarkers = updateMarkerIsStarTask.markers;
 
                 List<Object> param = new ArrayList<>();
 
-                for (Mark mark : responseMarkers.markerList) {
+                for (Mark mark : responseMarkers.markList) {
                     param.add(String.valueOf(ofl_loca_id_list.get(i)));
                     Commons.executeLocalQuery(this, DbHelper.update_all_old_unsync_markers, param);
                     i++;
