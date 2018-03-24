@@ -72,7 +72,7 @@ public class Commons {
     public static void showPermissionDialog(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setCancelable(false);
-        builder.setMessage("Please grant all required permissions. The App " +
+        builder.setMessage("Please grant location and storage permissions.The App " +
                 "may not function well otherwise.");
         builder.setTitle("GeoTrails");
         builder.setPositiveButton("App Settings", new DialogInterface.OnClickListener() {
@@ -88,7 +88,7 @@ public class Commons {
     public static void showNonCancellablePermissionDialog(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setCancelable(false);
-        builder.setMessage("Please grant all required permissions. The App " +
+        builder.setMessage("Please grant location and storage permissions.The App " +
                 "may not function well otherwise.");
         builder.setTitle("GeoTrails");
         builder.setPositiveButton("App Settings", new DialogInterface.OnClickListener() {

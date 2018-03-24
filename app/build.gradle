@@ -10,8 +10,8 @@ android {
         applicationId "com.theleafapps.pro.geotrails"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 4
-        versionName "2.0.2"
+        versionCode 5
+        versionName "2.0.3"
         multiDexEnabled true
     }
     dexOptions {
