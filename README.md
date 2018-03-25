@@ -1,4 +1,4 @@
-# geotrails
+# Geotrails
 
 Geotrails is the Geo-tagging app which is the very useful app for travellers, explorers, backpackers, surveyors, trekkers 
 and what not !
@@ -15,6 +15,7 @@ Geotrails integrated Google Maps for marking ge
 
 The App Uses Following native and 3rd party libraries
 - Facebook Authentication
+- Google Maps
 - RecyclerView
 - CardView
 - Volley
