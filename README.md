@@ -24,11 +24,11 @@ The App Uses Following native and 3rd party libraries
 
 &nbsp;&nbsp;&nbsp;
 
-![Alt text](/Screenshots/1.png?raw=true)
-![Alt text](/Screenshots/2.png?raw=true)
-![Alt text](/Screenshots/3.png?raw=true)
-![Alt text](/Screenshots/4.png?raw=true)
-![Alt text](/Screenshots/5.png?raw=true)
-![Alt text](/Screenshots/6.png?raw=true)
-![Alt text](/Screenshots/7.png?raw=true)
+![1](https://user-images.githubusercontent.com/24782276/220789722-484d4844-e211-4f99-b1e9-4ebb44c82fa2.png)
+![2](https://user-images.githubusercontent.com/24782276/220789765-0002dc6e-9566-4269-98e2-e6682024d830.png)
+![3](https://user-images.githubusercontent.com/24782276/220789791-a22bfb5d-1726-4141-b6e8-50f3aca96c77.png)
+![4](https://user-images.githubusercontent.com/24782276/220789809-e80cd84c-f058-43a4-a3f4-dff1bb242377.png)
+![5](https://user-images.githubusercontent.com/24782276/220789821-2efe659c-219e-4b0c-9f1f-458f6adc0f51.png)
+![6](https://user-images.githubusercontent.com/24782276/220789829-e6dd481a-4a2f-4a36-bf3a-c5158457d013.png)
+![7](https://user-images.githubusercontent.com/24782276/220789839-3f8f6a84-bab7-4a69-baf7-4a2ee0ed3479.png)
 
